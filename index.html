@@ -1,0 +1,1240 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>GANB FE Workshop Register</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: sticky top bar with tabs; each view is a work surface (form left, live list right) that stacks on narrow screens */
+:root{
+  --bg:#F1F2EF; --surface:#FFFFFF; --sunk:#E8EAE6; --ink:#1D2226; --muted:#5C656C; --line:#D6D9D3;
+  --accent:#B3141C; --accent-ink:#FFFFFF; --tag:#F0C132; --tag-ink:#2A2200;
+  --st-received:#3C6A8E; --st-service:#A86A12; --st-ready:#2C7A4B; --st-delivered:#6B7378; --st-bad:#B3141C;
+  --warn-bg:#FFF4D6; --warn-ink:#6B4A00; --bad-bg:#FBE3E3; --ok-bg:#E2F1E7;
+  --f-display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:6px; --logo-bg:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14181B; --surface:#1C2125; --sunk:#232A2F; --ink:#E6E9EA; --muted:#9AA3A9; --line:#30383D;
+  --accent:#E2474D; --accent-ink:#FFFFFF; --tag:#E2B52C; --tag-ink:#1F1800;
+  --st-received:#7FAFD3; --st-service:#E0A34A; --st-ready:#5FC08A; --st-delivered:#9AA3A9; --st-bad:#F07075;
+  --warn-bg:#3A3015; --warn-ink:#F2D58A; --bad-bg:#3D1C1E; --ok-bg:#183326; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14181B; --surface:#1C2125; --sunk:#232A2F; --ink:#E6E9EA; --muted:#9AA3A9; --line:#30383D;
+  --accent:#E2474D; --accent-ink:#FFFFFF; --tag:#E2B52C; --tag-ink:#1F1800;
+  --st-received:#7FAFD3; --st-service:#E0A34A; --st-ready:#5FC08A; --st-delivered:#9AA3A9; --st-bad:#F07075;
+  --warn-bg:#3A3015; --warn-ink:#F2D58A; --bad-bg:#3D1C1E; --ok-bg:#183326; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1320px;margin:0 auto}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.topin{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{width:30px;height:30px;border-radius:50%;background:var(--accent);display:grid;place-items:center;flex:none}
+.mark svg{width:16px;height:16px}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;letter-spacing:.01em;white-space:nowrap}
+.brand small{display:block;color:var(--muted);font-size:12px;line-height:1.1}
+.logochip{background:var(--logo-bg);border-radius:6px;padding:3px 6px;display:flex;flex:none}
+.logochip img{height:50px;width:auto;display:block}
+.brand .bl{border-left:1px solid var(--line);padding-left:10px}
+.brand .bl b{display:block;font-family:var(--f-display);font-size:17px;line-height:1.1;white-space:nowrap}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1 1 auto}
+nav.tabs button{font:600 14px var(--f-body);background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:var(--r);cursor:pointer}
+nav.tabs button[aria-current="page"]{background:var(--sunk);color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+nav.tabs button .ct{font:500 11px var(--f-mono);background:var(--line);color:var(--ink);border-radius:9px;padding:1px 6px;margin-left:5px}
+.who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.who select{min-width:150px}
+main{padding-block:20px 60px}
+.banner{border-radius:var(--r);padding:10px 14px;margin-bottom:16px;font-size:14px}
+.banner.warn{background:var(--warn-bg);color:var(--warn-ink)}
+.banner.bad{background:var(--bad-bg);color:var(--st-bad)}
+.grid2{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;min-width:0}
+.panel h2{font-family:var(--f-display);font-size:19px;margin:0 0 4px;font-weight:700;text-wrap:balance}
+.panel .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+h3.sec{font:700 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
+h3.sec:first-of-type{border-top:0;padding-top:0;margin-top:4px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fields .full{grid-column:1/-1}
+@media (max-width:420px){.fields{grid-template-columns:minmax(0,1fr)}}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+input,select,textarea{font:15px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:7px 9px;width:100%;min-width:0}
+textarea{min-height:60px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.inline{display:flex;gap:6px}
+.inline>*{min-width:0}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);font-weight:400}
+.chk input{width:auto}
+.chks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}
+.btn{font:600 14px var(--f-body);border-radius:5px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--sunk)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn.link{border:0;background:none;color:var(--accent);padding:2px 4px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
+.tagno{font:500 13px var(--f-mono);background:var(--tag);color:var(--tag-ink);padding:2px 7px;border-radius:3px;white-space:nowrap;letter-spacing:.02em}
+.mono{font-family:var(--f-mono);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.st-received{color:var(--st-received)} .st-in_service{color:var(--st-service)} .st-ready{color:var(--st-ready)} .st-delivered{color:var(--st-delivered)} .st-bad{color:var(--st-bad)}
+.alerts{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.alert{font-size:13px;padding:7px 10px;border-radius:5px;background:var(--warn-bg);color:var(--warn-ink)}
+.alert.bad{background:var(--bad-bg);color:var(--st-bad)}
+.alert.info{background:var(--sunk);color:var(--ink)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar input[type=search]{flex:1 1 200px;width:auto}
+.toolbar select{width:auto}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.seg button{font:600 13px var(--f-body);border:0;background:var(--surface);color:var(--muted);padding:6px 10px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--sunk);color:var(--ink)}
+.counters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+@media (max-width:900px){.counters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.counters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.counter{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--cc);border-radius:6px;padding:10px 12px;cursor:pointer;color:var(--ink);font-family:var(--f-body);min-width:0}
+.counter:hover{background:var(--sunk)}
+.counter[aria-pressed="true"]{background:var(--sunk);box-shadow:inset 0 0 0 2px var(--cc)}
+.counter b{font:700 32px/1 var(--f-display);color:var(--cc);font-variant-numeric:tabular-nums}
+.counter .cl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.counter .cs{font-size:12px;color:var(--muted)}
+.c-received{--cc:var(--st-received)} .c-in_service{--cc:var(--st-service)} .c-ready{--cc:var(--st-ready)} .c-condemned{--cc:var(--st-bad)} .c-delivered{--cc:var(--st-delivered)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table.t{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+table.t th{font:700 11px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;background:var(--sunk);white-space:nowrap}
+table.t td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+table.t tr.click{cursor:pointer}
+table.t tr.click:hover td{background:var(--sunk)}
+table.t td.nw{white-space:nowrap}
+.empty{padding:28px 18px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-family:var(--f-display);font-size:18px;margin-bottom:4px}
+.batch{display:flex;flex-direction:column;gap:0}
+.batch .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.batch .row:first-child{border-top:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.stats{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:14px}
+.stat{display:flex;flex-direction:column}
+.stat b{font:700 24px var(--f-display);line-height:1}
+.stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,12,14,.45);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(720px,100%);background:var(--surface);z-index:21;display:flex;flex-direction:column;border-left:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.dhead{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dhead .t1{font-family:var(--f-display);font-size:20px;font-weight:700;line-height:1.2}
+.dbody{overflow:auto;padding:4px 18px 18px;flex:1}
+.dfoot{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:var(--sunk)}
+.tl{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-size:13px;font-variant-numeric:tabular-nums}
+.tl b{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dues{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:480px){.dues{grid-template-columns:minmax(0,1fr)}}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font:600 12px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:3px 9px;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:6px;z-index:40;font-weight:600;font-size:14px;max-width:calc(100% - 32px)}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--bad-bg);color:var(--st-bad);padding:8px 10px;border-radius:5px;font-size:14px}
+.techlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.techlist span{display:inline-flex;gap:6px;align-items:center;background:var(--sunk);padding:4px 8px;border-radius:4px;font-size:14px}
+.logo-prev{max-height:60px;max-width:200px;background:#fff;padding:4px;border:1px solid var(--line);border-radius:4px}
+.hint{font-size:12px;color:var(--muted);font-weight:400}
+.photo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--sunk);border:1px dashed var(--line);border-radius:6px;padding:10px 12px;margin-bottom:10px}
+.photo>div{flex:1 1 220px;min-width:0}
+input.filled,select.filled{background:var(--ok-bg)}
+input.unsure,select.unsure{background:var(--warn-bg)}
+.legend{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin:0 3px 0 6px}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:.6}}}
+
+/* sign-in screen and signed-in user box */
+.authwrap{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.authwrap[hidden]{display:none}
+.authbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:28px 26px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:12px}
+.authbox h2{margin:0;font-family:var(--f-display);font-size:24px}
+.authbox .f input{width:100%}
+.authlogo{width:130px;align-self:center;background:#fff;border-radius:8px;padding:6px}
+.userbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px}
+.userbox .rl{opacity:.75;font-size:12px}
+</style>
+
+<div id="auth" class="authwrap" hidden>
+  <form class="authbox" id="authForm">
+    <img src="ganb-logo.jpg" alt="GANB Global Fire Prevention Systems" class="authlogo">
+    <h2>FE Workshop Register</h2>
+    <p class="sub" style="margin:0">Sign in with your GANB account.</p>
+    <label class="f" for="au-email">Email<input id="au-email" type="email" autocomplete="username" required></label>
+    <label class="f" for="au-pass">Password<input id="au-pass" type="password" autocomplete="current-password" required></label>
+    <div id="au-msg" class="small" role="alert" style="color:var(--st-bad)"></div>
+    <button class="btn pri" type="submit" id="au-btn">Sign in</button>
+    <p class="small muted" style="margin:0">Forgot your password? Ask the administrator to reset it.</p>
+  </form>
+</div>
+<header class="top"><div class="wrap topin">
+  <div class="brand" id="brand">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path fill="#fff" d="M6 1h4v2H9v1.1A4 4 0 0 1 12 8v6.2a.8.8 0 0 1-.8.8H4.8a.8.8 0 0 1-.8-.8V8a4 4 0 0 1 3-3.9V3H6z"/></svg></div>
+    <div><h1>FE Workshop Register</h1><small id="coName">Fire extinguisher service</small></div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-v="intake">Intake</button>
+    <button data-v="workshop">Workshop<span class="ct" id="ctOpen">0</span></button>
+    <button data-v="delivery">Delivery notes<span class="ct" id="ctReady">0</span></button>
+    <button data-v="clients">Clients<span class="ct" id="ctClients">0</span></button>
+    <button data-v="settings">Settings</button>
+    <button data-v="activity" id="tab-activity" hidden>Activity log</button>
+  </nav>
+  <select id="techSel" hidden aria-hidden="true"></select><div class="who userbox" id="userBox"></div>
+</div></header>
+
+<main class="wrap">
+  <div id="sysBanner"></div>
+  <section id="v-intake" hidden></section>
+  <section id="v-workshop" hidden></section>
+  <section id="v-delivery" hidden></section>
+  <section id="v-clients" hidden></section>
+  <section id="v-settings" hidden></section>
+  <section id="v-activity" hidden></section>
+</main>
+<div id="drawerRoot"></div>
+<div id="toastRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ---------- NFPA 10 reference data ---------- */
+const TYPES = {
+  abc:   {label:'Dry chemical ABC (stored pressure)', short:'ABC dry chem', hydro:12, six:true,  agent:'ABC dry chemical (MAP)', unit:'lb', dcsp:true},
+  bc:    {label:'Dry chemical BC (stored pressure)',  short:'BC dry chem',  hydro:12, six:true,  agent:'BC dry chemical',        unit:'lb', dcsp:true},
+  dcss:  {label:'Dry chemical, stainless steel shell',short:'Dry chem SS',  hydro:5,  six:true,  agent:'Dry chemical',           unit:'lb', dcsp:true},
+  dccart:{label:'Dry chemical (cartridge-operated)',  short:'Dry chem cart.',hydro:12,six:false, agent:'Dry chemical',           unit:'lb'},
+  co2:   {label:'Carbon dioxide (CO₂)',          short:'CO₂',     hydro:5,  six:false, agent:'CO₂',              unit:'lb'},
+  water: {label:'Water (stored pressure)',            short:'Water',        hydro:5,  six:false, agent:'Water',                  unit:'gal'},
+  mist:  {label:'Water mist',                         short:'Water mist',   hydro:5,  six:false, agent:'Deionized water',        unit:'L'},
+  foam:  {label:'AFFF / FFFP foam',                   short:'Foam',         hydro:5,  six:false, agent:'AFFF premix',            unit:'gal'},
+  wetk:  {label:'Wet chemical (Class K)',             short:'Wet chem K',   hydro:5,  six:false, agent:'Wet chemical agent',     unit:'L'},
+  clean: {label:'Clean agent / halogenated',          short:'Clean agent',  hydro:12, six:true,  agent:'Halotron I',             unit:'lb'},
+  powd:  {label:'Dry powder (Class D)',               short:'Class D',      hydro:12, six:true,  agent:'Dry powder',             unit:'lb'},
+};
+const SERVICES = [
+  ['insp','Annual inspection & maintenance'],
+  ['recharge','Recharge / refill'],
+  ['hydro','Hydrostatic test'],
+  ['six','6-year maintenance (breakdown)'],
+  ['repair','Repair'],
+];
+const PARTS = ['Valve O-ring','Valve stem','Pressure gauge','Hose assembly','Nozzle / horn','Safety pin','Tamper seal','Verification collar','Siphon tube','Discharge lever','Bracket','Service tag','Instruction label','Hydro test label'];
+const REASONS = ['Failed hydrostatic test','Corrosion / pitting','Dents or mechanical damage','Damaged threads','Obsolete per NFPA 10','Non-rechargeable past 12-year life','Stored-pressure dry chem 1984 or earlier','Missing / illegible nameplate','Other'];
+const STATUS = {received:'Received', in_service:'In service', ready:'Ready', delivered:'Delivered'};
+
+/* ---------- state ---------- */
+const S = {view:'intake', units:[], clients:[], notes:[], settings:{}, db:null, user:null, downloads:null, canWrite:null, myId:null,
+  wsFilter:'open', wsClient:'', wsQuery:'', dnClient:'', dnFrom:'', dnTo:'', intakeClient:'', intakeDate:today(), editClient:null};
+const TAB = Math.random().toString(36).slice(2);
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nowMonth(){return today().slice(0,7)}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+const sleep = ms=>new Promise(r=>setTimeout(r,ms));
+function toast(msg){const r=$('#toastRoot');r.innerHTML='<div class="toast" role="status">'+esc(msg)+'</div>';clearTimeout(toast.t);toast.t=setTimeout(()=>r.innerHTML='',2800)}
+
+/* ---------- dates & dues ---------- */
+function ym(s){ if(!s) return null; const m=String(s).match(/^(\d{4})-(\d{2})/); return m?{y:+m[1],m:+m[2]}:null }
+function addMonths(s,n){const d=ym(s); if(!d) return ''; let t=d.y*12+(d.m-1)+n; return Math.floor(t/12)+'-'+String(t%12+1).padStart(2,'0')}
+function maxYM(...a){return a.filter(Boolean).map(x=>String(x).slice(0,7)).sort().pop()||''}
+function fmtYM(s){const d=ym(s); if(!d) return '—'; return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.m-1]+' '+d.y}
+function nowHM(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function fmtDT(d,t){ return d? fmtDate(d)+(t?' '+t:'') : '—' }
+function hoursBetween(d1,t1,d2,t2){ if(!d1||!t1||!d2||!t2) return null; const h=(new Date(d2+'T'+t2)-new Date(d1+'T'+t1))/36e5; return isFinite(h)&&h>=0?h:null }
+function fmtDur(h){ if(h==null) return ''; if(h<24) return Math.round(h)+' h'; const d=Math.floor(h/24), r=Math.round(h-d*24); return d+' d'+(r?' '+r+' h':'') }
+function lastStamp(u){ return u.status==='delivered'?fmtDT(u.deliveredAt,u.deliveredTime):u.status==='ready'?fmtDT(u.readyAt,u.readyTime):u.status==='in_service'?fmtDT(u.startedAt,u.startedTime):fmtDT(u.received,u.receivedTime) }
+function fmtDate(s){ if(!s) return '—'; const [y,m,d]=s.split('-'); return d? d+' '+fmtYM(s).split(' ')[0]+' '+y : fmtYM(s)}
+function computeDues(u, svc){
+  const t = TYPES[u.type]; if(!t) return {annual:'',hydro:'',six:'',life:''};
+  const sd = (svc&&svc.date)||today(); const it=(svc&&svc.items)||{};
+  const hydroDoneNow = it.hydro && svc.hydroResult!=='fail';
+  const annual = addMonths(sd,12);
+  let hydro='', six='', life='';
+  if(u.nonRech){ life = u.mfg? addMonths(u.mfg,144):''; }
+  else{
+    const hb = hydroDoneNow ? sd : (u.lastHydro || u.mfg);
+    hydro = hb ? addMonths(hb, t.hydro*12) : '';
+    if(t.six){ const sb = maxYM(it.six?sd:null, hydroDoneNow?sd:null, u.lastSix, u.lastHydro, u.mfg); six = sb? addMonths(sb,72):''; }
+  }
+  return {annual, hydro, six, life};
+}
+function intakeAlerts(u){
+  const out=[]; const t=TYPES[u.type]; const now=nowMonth();
+  if(!u.mfg) out.push(['warn','Manufacture date missing. Check the nameplate or cylinder stamp.']);
+  if(t && t.dcsp && ym(u.mfg) && ym(u.mfg).y<=1984) out.push(['bad','Stored-pressure dry chemical made 1984 or earlier: NFPA 10 requires removal from service.']);
+  if(u.nonRech && u.mfg && addMonths(u.mfg,144)<=now) out.push(['bad','Non-rechargeable unit is past its 12-year life: remove from service.']);
+  if(t && !u.nonRech){
+    const d=computeDues(u,null);
+    if(d.hydro && d.hydro<=now) out.push(['warn','Hydrostatic test due '+fmtYM(d.hydro)+' (every '+t.hydro+' years for this type). Include hydro in this service.']);
+    if(d.six && d.six<=now && (!d.hydro || d.six<d.hydro || d.hydro>now)) out.push(['warn','6-year maintenance due '+fmtYM(d.six)+'.']);
+  }
+  return out;
+}
+
+/* ---------- lookups ---------- */
+const clientById = id => S.clients.find(c=>c.id===id) || {name:'(unknown client)'};
+const unitById = id => S.units.find(u=>u.id===id);
+const ROLE_LABEL={admin:'Administrator',office:'Office',tech:'Technician'};
+const activeProfiles = () => (S.profiles||[]).filter(p=>p.active);
+const techs = () => activeProfiles().filter(p=>p.role!=='office').map(p=>p.full_name);
+const office = () => activeProfiles().filter(p=>p.role==='office').map(p=>p.full_name);
+const people = () => techs().concat(office().filter(x=>!techs().includes(x)));
+function curTech(){ return (S.me&&S.me.full_name)||'' }
+const isTechName = n => techs().includes(n);
+function capStr(u){ return u.cap ? (u.cap+' '+(u.capUnit||'')) : '' }
+function bm(u){ return [u.brand,u.model].filter(Boolean).join(' ') }
+function svcSummary(u){
+  const s=u.svc||{}, it=s.items||{}; const out=[];
+  if(it.insp) out.push('Annual maintenance'); if(it.recharge) out.push('Recharge');
+  if(it.hydro) out.push('Hydro test'+(s.hydroPsi?' '+s.hydroPsi+' psi':'')+(s.hydroResult==='fail'?' FAIL':' pass'));
+  if(it.six) out.push('6-yr maintenance'); if(it.repair) out.push('Repair');
+  return out.join(', ');
+}
+function agentStr(u){ const s=u.svc||{}; const a=[]; if(s.agentQty) a.push((s.agentName||'Agent')+' '+s.agentQty+' '+(s.agentUnit||'')); if(s.parts&&s.parts.length) a.push(s.parts.join(', ')); return a.join('; ') }
+
+/* ---------- db helpers ---------- */
+function guardWrite(){ if(!S.db){toast('Database not connected. Open this page signed in to claude.ai.');return false} if(S.canWrite===false){toast('Your access is view-only. Ask the owner for Editor access.');return false} return true }
+let logQ=Promise.resolve();
+function logAct(a,ref,d){
+  if(!S.sb||!S.me) return;
+  S.sb.from('activity').insert({user_email:S.me.email,user_name:S.me.full_name,action:a,ref:ref||'',details:d||''}).then(({error})=>{ if(error) console.warn('log failed',error) });
+}
+const vstr=v=>v==null||v===''?'(empty)':Array.isArray(v)?(v.join(', ')||'(empty)'):typeof v==='boolean'?(v?'Yes':'No'):String(v);
+function diff(o,n,labels){ o=o||{}; return Object.entries(labels).filter(([k])=>vstr(o[k])!==vstr(n[k])).map(([k,l])=>l+': '+vstr(o[k])+' → '+vstr(n[k])).join('; ') }
+const SVC_LABELS={date:'Service date',tech:'Technician',hydroPsi:'Hydro psi',hydroResult:'Hydro result',agentName:'Agent',agentQty:'Agent qty',agentUnit:'Agent unit',parts:'Parts',findings:'Findings',condemned:'Condemned',condemnReason:'Condemn reason',dueAnnual:'Next annual',dueHydro:'Next hydro',dueSix:'Next 6-yr'};
+const NP_LABELS={serial:'Serial',brand:'Brand',model:'Model',type:'Type',cap:'Capacity',capUnit:'Cap. unit',mfg:'Mfg date',lastHydro:'Last hydro',lastSix:'Last 6-yr',location:'Location'};
+const CL_LABELS={name:'Name',address:'Address',contact:'Contact',phone:'Phone',email:'Email'};
+const ST_LABELS={company:'Company',address:'Address',phone:'Phone',email:'Email',website:'Website',paper:'Paper',prefix:'Prefix'};
+function svcDiff(o,n){ o=o||{}; const oi=o.items||{}, ni=n.items||{}; const items=SERVICES.filter(([k])=>!!oi[k]!==!!ni[k]).map(([k,l])=>(ni[k]?'+ ':'− ')+l.split(' (')[0]); return [items.length?'Services: '+items.join(', '):'',diff(o,n,SVC_LABELS)].filter(Boolean).join('; ') }
+async function nextSeq(key){
+  const {data,error}=await S.sb.rpc('next_seq',{p_key:key}); if(error) throw dbErr(error); return data;
+}
+async function writeErr(e){ console.error(e); if(e&&e.code==='invalid_argument'&&S.canWrite==null){S.canWrite=false;renderBanner()} toast('Could not save: '+((e&&e.message)||'error')) }
+
+/* ---------- PDF ---------- */
+let jsPDFCtor=null;
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+async function getPDF(){
+  if(jsPDFCtor) return jsPDFCtor;
+  for(const u of ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js','https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js']){
+    try{ await loadScript(u); if(window.jspdf&&window.jspdf.jsPDF){ jsPDFCtor=window.jspdf.jsPDF; return jsPDFCtor } }catch(e){}
+  }
+  throw new Error('The PDF library could not load. Check the internet connection and try again.');
+}
+function pdfDoc(J){ const fmt=(S.settings.paper==='a4')?'a4':'letter'; return new J({orientation:'landscape',unit:'pt',format:fmt}) }
+const M=34;
+function pdfHeader(doc,title,meta){
+  const W=doc.internal.pageSize.getWidth(); const st=S.settings; let x=M, y=M;
+  if(st.logo){ try{ const h=46, w=Math.min(150, h*(st.logoW||1)/(st.logoH||1)); doc.addImage(st.logo, st.logo.includes('image/png')?'PNG':'JPEG', x, y, w, h); x+=w+12 }catch(e){} }
+  doc.setTextColor(20); doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.text(st.company||'Company name', x, y+12);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(70);
+  const lines=[st.address, [st.phone&&('Tel '+st.phone), st.email, st.website].filter(Boolean).join('   ')].filter(Boolean);
+  let ly=y+25; lines.forEach(l=>{ doc.splitTextToSize(l, 330).forEach(t=>{doc.text(t,x,ly);ly+=10.5}) });
+  doc.setTextColor(179,20,28); doc.setFont('helvetica','bold'); doc.setFontSize(17); doc.text(title, W-M, y+14, {align:'right'});
+  doc.setTextColor(30); doc.setFontSize(9.5); let my=y+30;
+  meta.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); const vw=doc.getTextWidth(String(v)); doc.setFont('helvetica','normal'); doc.text(k, W-M-vw-6, my, {align:'right'}); doc.setFont('helvetica','bold'); doc.text(String(v), W-M, my, {align:'right'}); my+=12 });
+  const by=Math.max(ly,my,y+52)+4; doc.setDrawColor(179,20,28); doc.setLineWidth(1.2); doc.line(M,by,W-M,by);
+  return by+14;
+}
+function pdfClient(doc,y,c,extra){
+  doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(110); doc.text('CLIENT', M, y);
+  doc.setTextColor(20); doc.setFontSize(10.5); doc.text(c.name||'', M, y+13);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(60);
+  let yy=y+25; [c.address, [c.contact, c.phone, c.email].filter(Boolean).join('   ')].filter(Boolean).forEach(l=>{doc.splitTextToSize(l,380).forEach(t=>{doc.text(t,M,yy);yy+=10.5})});
+  if(extra&&extra.length){ const W=doc.internal.pageSize.getWidth(); let ey=y; extra.forEach(([k,v])=>{ doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(110);doc.text(k.toUpperCase(), W/2+40, ey); doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(20);doc.text(String(v||'—'), W/2+140, ey); ey+=12 }); yy=Math.max(yy,ey) }
+  return yy+8;
+}
+function pdfTable(doc,y,cols,rows,opt={}){
+  const W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight(); const avail=W-2*M;
+  const tot=cols.reduce((a,c)=>a+c.w,0); const ws=cols.map(c=>c.w/tot*avail); const fs=opt.fs||7.6, lh=fs*1.22, pad=4;
+  const head=()=>{ doc.setFillColor(opt.headFill||'#E9EAE6'); doc.rect(M,y,avail,16,'F'); doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(60);
+    let x=M; cols.forEach((c,i)=>{ doc.text(c.h.toUpperCase(), x+pad, y+10.5); x+=ws[i] }); y+=16 };
+  if(opt.title){ doc.setFont('helvetica','bold'); doc.setFontSize(9.5); if(Array.isArray(opt.titleColor)) doc.setTextColor(...opt.titleColor); else doc.setTextColor(20); doc.text(opt.title, M, y+4); y+=12 }
+  head();
+  rows.forEach((r,ri)=>{
+    doc.setFont('helvetica','normal'); doc.setFontSize(fs);
+    const cells=cols.map((c,i)=>doc.splitTextToSize(String(r[i]??''), ws[i]-pad*2));
+    const h=Math.max(...cells.map(l=>l.length))*lh+pad*2;
+    if(y+h>H-M-(opt.reserve||22)){ doc.addPage(); y=M+6; head(); doc.setFont('helvetica','normal'); doc.setFontSize(fs) }
+    if(ri%2===1){ doc.setFillColor('#F6F6F3'); doc.rect(M,y,avail,h,'F') }
+    doc.setTextColor(25); let x=M; cells.forEach((l,i)=>{ if(cols[i].mono) doc.setFont('courier','bold'); else doc.setFont('helvetica', cols[i].bold?'bold':'normal'); doc.text(l, x+pad, y+pad+fs*0.85); x+=ws[i] });
+    doc.setDrawColor(215); doc.setLineWidth(.4); doc.line(M,y+h,M+avail,y+h); y+=h;
+  });
+  return y+10;
+}
+function pdfText(doc,y,text,size=8.5,color=60){ const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(); doc.setFont('helvetica','normal');doc.setFontSize(size); Array.isArray(color)?doc.setTextColor(...color):doc.setTextColor(color); const ls=doc.splitTextToSize(text,W-2*M); if(y+ls.length*size*1.3>H-M-20){doc.addPage();y=M+6} doc.text(ls,M,y); return y+ls.length*size*1.3+4 }
+function pdfSign(doc,y,left,right){
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(); if(y+78>H-M-14){doc.addPage();y=M+20}
+  y+=14; const colW=(W-2*M-40)/2;
+  [[left,M],[right,M+colW+40]].forEach(([s,x])=>{
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(110);doc.text(s.label.toUpperCase(),x,y);
+    doc.setDrawColor(120);doc.setLineWidth(.6);
+    const rows=[['Name',s.name||''],['Signature',''],['Date','']]; let yy=y+22;
+    rows.forEach(([k,v])=>{ doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(90);doc.text(k,x,yy); doc.line(x+52,yy+1,x+colW,yy+1); if(v){doc.setTextColor(20);doc.setFontSize(9.5);doc.text(v,x+56,yy-2)} yy+=20 });
+  });
+  return y+80;
+}
+function pdfFooter(doc,label){ const n=doc.getNumberOfPages(); const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+  for(let i=1;i<=n;i++){ doc.setPage(i); doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(120); doc.text(label,M,H-18); doc.text('Page '+i+' of '+n,W-M,H-18,{align:'right'}) } }
+async function saveFile(name,data){
+  try{ const blob=data instanceof Blob?data:new Blob([data],{type:/\.csv$/i.test(name)?'text/csv':'text/plain'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),5000); toast('Saved '+name); return true }
+  catch(e){ toast('Download failed: '+((e&&e.message)||'error')); return false }
+}
+function unitRowsFull(units){
+  return units.map((u,i)=>{ const s=u.svc||{}; return [i+1,u.tag,(TYPES[u.type]||{}).short||'',bm(u),u.serial||'',capStr(u),fmtYM(u.mfg),svcSummary(u),agentStr(u),fmtYM(s.dueAnnual),u.nonRech?'n/a (non-rech.)':fmtYM(s.dueHydro),(TYPES[u.type]||{}).six&&!u.nonRech?fmtYM(s.dueSix):'n/a'] });
+}
+async function pdfDelivery(note){
+  const J=await getPDF(); const doc=pdfDoc(J); const c=clientById(note.clientId);
+  const units=note.unitIds.map(unitById).filter(Boolean); const good=units.filter(u=>!(u.svc&&u.svc.condemned)); const bad=units.filter(u=>u.svc&&u.svc.condemned);
+  let y=pdfHeader(doc,note.cancelled?'DELIVERY NOTE (CANCELLED)':'DELIVERY NOTE',[['No.',note.no],['Date',fmtDate(note.date)]]);
+  y=pdfClient(doc,y,c,[['Units returned',units.length],['In service',good.length],['Condemned',bad.length],['Client ref.',note.clientRef||'—']]);
+  if(good.length) y=pdfTable(doc,y,[{h:'#',w:3},{h:'Workshop no.',w:9,mono:true},{h:'Type',w:8},{h:'Brand / model',w:10},{h:'Serial',w:8},{h:'Cap.',w:5},{h:'Mfg',w:6},{h:'Service performed',w:15},{h:'Agent & parts',w:15},{h:'Next annual',w:6.5},{h:'Next hydro',w:6.5},{h:'Next 6-yr',w:6.5}], unitRowsFull(good), {title:'Extinguishers serviced and returned to service'});
+  if(bad.length) y=pdfTable(doc,y,[{h:'#',w:3},{h:'Workshop no.',w:9,mono:true},{h:'Type',w:9},{h:'Brand / model',w:11},{h:'Serial',w:9},{h:'Cap.',w:5},{h:'Mfg',w:6},{h:'Reason',w:15},{h:'Findings',w:25}], bad.map((u,i)=>[i+1,u.tag,(TYPES[u.type]||{}).short,bm(u),u.serial,capStr(u),fmtYM(u.mfg),u.svc.condemnReason||'',u.svc.findings||'']), {title:'Condemned: returned out of service, not to be placed back in use',titleColor:[179,20,28],headFill:'#F6DEDE'});
+  y=pdfText(doc,y,'Inspection, maintenance, recharging and hydrostatic testing performed in accordance with NFPA 10, Standard for Portable Fire Extinguishers. Next due dates are month and year.'+(note.replaces?'\nThis note replaces cancelled delivery note '+note.replaces+'.':'')+(note.remarks?'\nRemarks: '+note.remarks:''));
+  if(note.cancelled) y=pdfText(doc,y,'CANCELLED on '+fmtDT(note.cancelledAt,note.cancelledTime)+(note.cancelReason?'. Reason: '+note.cancelReason:'')+(note.replacedBy?'. Replaced by '+note.replacedBy:'')+'. This note is not valid.',10,[179,20,28]);
+  pdfSign(doc,y,{label:'Delivered by',name:note.deliveredBy},{label:'Received by (client)',name:note.receivedBy});
+  pdfFooter(doc,(S.settings.company||'')+' · Delivery note '+note.no);
+  await saveFile(note.no+' '+(c.name||'client')+'.pdf', doc.output('blob'));
+}
+async function pdfCondemned(note){
+  const J=await getPDF(); const doc=pdfDoc(J); const c=clientById(note.clientId);
+  const bad=note.unitIds.map(unitById).filter(u=>u&&u.svc&&u.svc.condemned);
+  let y=pdfHeader(doc,'CONDEMNED EXTINGUISHER REPORT',[['Ref.',note.no+'-C'],['Date',fmtDate(note.date)]]);
+  y=pdfClient(doc,y,c,[['Units condemned',bad.length],['Delivery note',note.no]]);
+  y=pdfText(doc,y,'The extinguishers listed below did not pass inspection, maintenance or testing under NFPA 10 and are removed from service. They must not be reinstalled. Replacement units are recommended for each location.',9,40);
+  y=pdfTable(doc,y+4,[{h:'#',w:3},{h:'Workshop no.',w:9,mono:true},{h:'Type',w:9},{h:'Brand / model',w:10},{h:'Serial',w:8},{h:'Cap.',w:5},{h:'Mfg',w:6},{h:'Hydro',w:8},{h:'Location',w:9},{h:'Reason',w:13},{h:'Findings',w:20}],
+    bad.map((u,i)=>{const s=u.svc||{};return [i+1,u.tag,(TYPES[u.type]||{}).short,bm(u),u.serial,capStr(u),fmtYM(u.mfg),s.items&&s.items.hydro?((s.hydroPsi?s.hydroPsi+' psi ':'')+(s.hydroResult==='fail'?'FAIL':'pass')):'—',u.location||'',s.condemnReason||'',s.findings||'']}),{headFill:'#F6DEDE'});
+  pdfSign(doc,y,{label:'Technician',name:(bad[0]&&bad[0].svc&&bad[0].svc.tech)||''},{label:'Client acknowledgment',name:note.receivedBy});
+  pdfFooter(doc,(S.settings.company||'')+' · Condemned report '+note.no+'-C');
+  await saveFile(note.no+'-C Condemned '+(c.name||'client')+'.pdf', doc.output('blob'));
+}
+async function pdfIntake(clientId,date){
+  const units=S.units.filter(u=>u.clientId===clientId&&u.received===date).sort((a,b)=>a.tag.localeCompare(b.tag));
+  if(!units.length){toast('No units received for this client on that date.');return}
+  const J=await getPDF(); const doc=pdfDoc(J); const c=clientById(clientId);
+  let y=pdfHeader(doc,'INTAKE RECEIPT',[['Date',fmtDate(date)],['Units',units.length]]);
+  y=pdfClient(doc,y,c,[['Client ref.',units[0].ref||'—']]);
+  y=pdfTable(doc,y,[{h:'#',w:3},{h:'Workshop no.',w:9,mono:true},{h:'Time',w:4},{h:'Type',w:10},{h:'Brand / model',w:11},{h:'Serial',w:9},{h:'Cap.',w:5},{h:'Mfg',w:6},{h:'Last hydro',w:6},{h:'Client location',w:11},{h:'Condition on arrival',w:19}],
+    units.map((u,i)=>[i+1,u.tag,u.receivedTime||'',(TYPES[u.type]||{}).short,bm(u),u.serial,capStr(u),fmtYM(u.mfg),fmtYM(u.lastHydro),u.location||'',u.arrival||'']));
+  pdfSign(doc,y,{label:'Received by (workshop)',name:units[0].tech||''},{label:'Delivered by (client)',name:''});
+  pdfFooter(doc,(S.settings.company||'')+' · Intake receipt '+fmtDate(date));
+  await saveFile('Intake '+date+' '+(c.name||'client')+'.pdf', doc.output('blob'));
+}
+
+/* ---------- navigation ---------- */
+function setView(v){
+  S.view=v; lsSet('fe.view',v);
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-current', b.dataset.v===v?'page':'false'));
+  ['intake','workshop','delivery','clients','settings','activity'].forEach(k=>$('#v-'+k).hidden = k!==v);
+  render();
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) setView(b.dataset.v)});
+$('#techSel').addEventListener('change',e=>{ lsSet('fe.tech',e.target.value); renderChrome(); const l=$('#in-tech'); if(l) l.textContent='Registered by: '+(curTech()||'you'); const b=$('#dn-by'); if(b&&!b.value) b.value=curTech(); });
+
+const BRAND0=$('#brand').innerHTML;
+function renderChrome(){
+  $('#tab-activity').hidden=!S.isOwner;
+  const b=$('#brand'), lg=S.settings.logo||'';
+  if(b.dataset.k!==lg){ b.dataset.k=lg; b.innerHTML = lg ? '<span class="logochip"><img src="'+esc(lg)+'" alt="'+esc(S.settings.company||'Company')+' logo"></span><div class="bl"><b>Workshop Register</b><small>Fire extinguisher service</small></div>' : BRAND0 }
+  const cn=$('#coName'); if(cn) cn.textContent = S.settings.company || 'Fire extinguisher service';
+  const cur=curTech(); const opt=t=>'<option'+(t===cur?' selected':'')+'>'+esc(t)+'</option>';
+  $('#techSel').innerHTML = people().length? '<option value=""'+(cur?'':' selected')+'>Select your name…</option>'+(techs().length?'<optgroup label="Technicians">'+techs().map(opt).join('')+'</optgroup>':'')+(office().length?'<optgroup label="Office">'+office().filter(x=>!techs().includes(x)).map(opt).join('')+'</optgroup>':'') : '<option value="">Add people in Settings</option>';
+  $('#techSel').classList.toggle('unsure',!cur);
+  $('#ctOpen').textContent = S.units.filter(u=>u.status!=='delivered').length;
+  $('#ctReady').textContent = S.units.filter(u=>u.status==='ready').length;
+  $('#ctClients').textContent = S.clients.length;
+}
+function backupAge(){ const l=S.settings.lastBackup; if(!l) return 999; return Math.floor((new Date(today()+'T00:00')-new Date(l+'T00:00'))/864e5) }
+let XLSXlib=null;
+async function getXLSX(){
+  if(XLSXlib) return XLSXlib;
+  for(const u of ['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js','https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js','https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js']){
+    try{ await loadScript(u); if(window.XLSX){ XLSXlib=window.XLSX; return XLSXlib } }catch(e){} }
+  throw new Error('The Excel library could not load. Check the internet connection and try again.');
+}
+let backingUp=false;
+async function doBackup(){
+  if(!S.isOwner||!S.db||backingUp) return; backingUp=true; toast('Preparing backup…');
+  try{
+    const X=await getXLSX(); const wb=X.utils.book_new();
+    const add=(name,head,rows,widths)=>{ const ws=X.utils.aoa_to_sheet([head].concat(rows)); ws['!cols']=(widths||head.map(()=>16)).map(w=>({wch:w})); ws['!freeze']={xSplit:0,ySplit:1}; X.utils.book_append_sheet(wb,ws,name) };
+    const T=k=>(TYPES[k]||{}).label||k||'';
+    const units=[...S.units].sort((a,b)=>(a.tag||'').localeCompare(b.tag||''));
+    add('Extinguishers',['Workshop no','Client','Status','Type','Brand','Model','Serial','Capacity','Unit','Mfg','Last hydro','Last 6-yr','Non-rechargeable','Location','Condition on arrival','Client ref','Received','Received time','Registered by','Service started','Ready','Delivered','Delivery note','Cancelled notes','Services','Hydro psi','Hydro result','Agent','Agent qty','Parts','Findings','Condemned','Condemn reason','Next annual','Next hydro','Next 6-yr','Service technician'],
+      units.map(u=>{const s=u.svc||{};return [u.tag,clientById(u.clientId).name,STATUS[u.status]||u.status,T(u.type),u.brand,u.model,u.serial,u.cap,u.capUnit,u.mfg,u.lastHydro,u.lastSix,u.nonRech?'Yes':'',u.location,u.arrival,u.ref,u.received,u.receivedTime,u.tech,fmtDT(u.startedAt,u.startedTime).replace('—',''),fmtDT(u.readyAt,u.readyTime).replace('—',''),fmtDT(u.deliveredAt,u.deliveredTime).replace('—',''),u.noteNo,(u.prevNotes||[]).join(', '),svcSummary(u),s.hydroPsi,s.items&&s.items.hydro?s.hydroResult:'',s.agentName,s.agentQty?s.agentQty+' '+(s.agentUnit||''):'',(s.parts||[]).join(', '),s.findings,s.condemned?'Yes':'',s.condemnReason,s.dueAnnual,s.dueHydro,s.dueSix,s.tech].map(v=>v==null?'':v)}),
+      [13,30,12,26,12,12,16,9,6,9,10,10,8,20,30,12,11,8,16,16,16,16,14,14,34,9,9,18,10,30,30,9,24,10,10,10,16]);
+    add('Clients',['Name','Address','Contact','Phone','Email','Units serviced','In workshop'],[...S.clients].sort((a,b)=>a.name.localeCompare(b.name)).map(c=>[c.name,c.address,c.contact,c.phone,c.email,S.units.filter(u=>u.clientId===c.id).length,S.units.filter(u=>u.clientId===c.id&&u.status!=='delivered').length].map(v=>v==null?'':v)),[40,44,30,12,40,10,10]);
+    add('Delivery notes',['No.','Date','Client','Units','Workshop nos','Client ref','Delivered by','Received by','Remarks','Cancelled','Cancelled at','Cancel reason','Replaces','Replaced by'],
+      [...S.notes].sort((a,b)=>(a.no||'').localeCompare(b.no||'')).map(n=>[n.no,n.date,clientById(n.clientId).name,n.unitIds.length,n.unitIds.map(id=>(unitById(id)||{}).tag||'?').join(', '),n.clientRef,n.deliveredBy,n.receivedBy,n.remarks,n.cancelled?'Yes':'',n.cancelled?fmtDT(n.cancelledAt,n.cancelledTime):'',n.cancelReason,n.replaces,n.replacedBy].map(v=>v==null?'':v)),[14,11,30,6,40,12,16,16,30,9,16,30,14,14]);
+    const st=S.settings; add('Settings',['Setting','Value'],[['Company',st.company],['Address',st.address],['Phone',st.phone],['Email',st.email],['Website',st.website],['Paper',st.paper],['Workshop no. prefix',st.prefix],['Technicians',techs().join(', ')],['Office',office().join(', ')],['Backup made',today()+' '+nowHM()]].map(r=>r.map(v=>v==null?'':v)),[22,60]);
+    LG.from='2000-01-01'; LG.to=''; await loadLog();
+    add('Activity log',['Date','Time','Account','Email','Action','Record','Details'],LG.rows.map(r=>[r.date,r.time,(LG.names[r.uid]||{}).name||'',r.tech,r.a,r.ref,r.d]),[11,7,20,18,22,16,80]);
+    LG.from=daysAgo(7); LG.loaded=false;
+    const raw=[]; const push=(col,id,obj)=>{ const j=JSON.stringify(obj); const parts=[]; for(let i=0;i<j.length;i+=30000) parts.push(j.slice(i,i+30000)); raw.push([col,id].concat(parts)) };
+    S.units.forEach(u=>{const {id,...r}=u; push('units',id,r)}); S.clients.forEach(c=>{const {id,...r}=c; push('clients',id,r)}); S.notes.forEach(n=>{const {id,...r}=n; push('notes',id,r)});
+    const {logo,...stRest}=S.settings; push('meta','settings',stRest); push('meta','team',{techs:techs(),office:office()});
+    add('Restore data',['Collection','Id','Data (JSON) — do not edit'],raw,[12,24,100]);
+    const out=X.write(wb,{bookType:'xlsx',type:'array',compression:true});
+    const ok=await saveFile('GANB Workshop backup '+today()+'.xlsx', new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    if(ok){ try{ await S.db.doc('meta/settings').update({lastBackup:today(),lastBackupTime:nowHM()}) }catch(e){} logAct('Backup downloaded','Backup',units.length+' extinguishers, '+S.clients.length+' clients, '+S.notes.length+' notes') }
+  }catch(e){ toast(e.message||'Backup failed. Try again.') }
+  backingUp=false; render();
+}
+$('#sysBanner').addEventListener('click',e=>{ if(e.target.id==='bk-now') doBackup() });
+function renderBanner(){
+  let h='';
+  if(S.db===null) h='<div class="banner bad">The shared database is not connected in this view. Open this page in claude.ai while signed in to record and see extinguishers.</div>';
+  else if(S.canWrite===false) h='<div class="banner warn">You can view records but not change them. Ask the owner to share this page with you as Editor.</div>';
+  else if(S.isOwner&&S.db&&S.settingsLoaded&&backupAge()>=7) h='<div class="banner warn" style="display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center"><span><b>Weekly backup due.</b> '+(S.settings.lastBackup?'Last backup: '+fmtDT(S.settings.lastBackup,S.settings.lastBackupTime)+' ('+backupAge()+' days ago).':'No backup has been made yet.')+'</span><button class="btn sm pri" id="bk-now">Back up now</button></div>';
+  $('#sysBanner').innerHTML=h;
+}
+function render(){ renderChrome(); renderBanner(); ({intake:renderIntake,workshop:renderWorkshop,delivery:renderDelivery,clients:renderClients,settings:renderSettings,activity:renderActivity})[S.view]() }
+function clientOptions(sel,blank){ return (blank?'<option value="">'+blank+'</option>':'')+[...S.clients].sort((a,b)=>a.name.localeCompare(b.name)).map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>').join('') }
+function typeOptions(sel){ return '<option value="">Select type…</option>'+Object.entries(TYPES).map(([k,t])=>'<option value="'+k+'"'+(k===sel?' selected':'')+'>'+esc(t.label)+'</option>').join('') }
+function unitSel(sel,opts){ return opts.map(o=>'<option'+(o===sel?' selected':'')+'>'+o+'</option>').join('') }
+
+/* ---------- INTAKE ---------- */
+let intakeDraft = {type:'abc',capUnit:'lb'};
+function renderIntake(){
+  const el=$('#v-intake'); const d=intakeDraft; S.fullIntake=false;
+  el.innerHTML=`<div class="grid2">
+  <form class="panel" id="intakeForm" autocomplete="off">
+    <h2>Register an extinguisher</h2><p class="sub">One entry per unit as it arrives. Client, date and type stay filled for the next unit.</p>
+    <h3 class="sec">Intake</h3>
+    <div class="fields">
+      <label class="f full" for="in-client">Client
+        <div class="inline"><select id="in-client" required>${clientOptions(S.intakeClient,'Select client…')}</select><button type="button" class="btn sm" id="in-newclient">New client</button></div></label>
+      <div class="full" id="in-newclient-box" hidden>
+        <div class="fields"><label class="f" for="nc-name">Client name<input id="nc-name"></label><label class="f" for="nc-phone">Phone<input id="nc-phone"></label>
+        <label class="f full" for="nc-addr">Address<input id="nc-addr"></label></div>
+        <div class="actions"><button type="button" class="btn pri sm" id="nc-save">Add client</button><button type="button" class="btn sm" id="nc-cancel">Cancel</button></div>
+      </div>
+      <label class="f" for="in-date">Received date<input type="date" id="in-date" value="${esc(S.intakeDate)}" required></label>
+      <label class="f" for="in-time">Received time <span class="hint">(updates to now after each save)</span><input type="time" id="in-time" value="${nowHM()}" required></label>
+      <label class="f full" for="in-ref">Client ref. / PO<input id="in-ref" value="${esc(d.ref||'')}" placeholder="optional"></label>
+    </div>
+    <h3 class="sec">Nameplate</h3>
+    <div id="in-photo" hidden></div>
+    <div class="fields">
+      <label class="f full" for="in-serial">Serial number<input id="in-serial" value="${esc(d.serial||'')}" required></label>
+      <div class="full" id="in-seen"></div>
+      <label class="f" for="in-brand">Brand<input id="in-brand" list="brandList" value="${esc(d.brand||'')}"></label>
+      <label class="f" for="in-model">Model<input id="in-model" value="${esc(d.model||'')}"></label>
+      <label class="f full" for="in-type">Type<select id="in-type" required>${typeOptions(d.type)}</select></label>
+      <label class="f" for="in-cap">Capacity<div class="inline"><input id="in-cap" type="number" step="0.1" min="0" value="${esc(d.cap||'')}" required><select id="in-capunit" style="width:76px">${unitSel(d.capUnit||'lb',['lb','kg','gal','L'])}</select></div></label>
+      <label class="f" for="in-mfg">Manufacture date<input type="month" id="in-mfg" value="${esc(d.mfg||'')}"></label>
+      <label class="f" for="in-lasthydro">Last hydro test <span class="hint">(from label)</span><input type="month" id="in-lasthydro" value="${esc(d.lastHydro||'')}"></label>
+      <label class="f" for="in-lastsix">Last 6-yr maint. <span class="hint">(from label)</span><input type="month" id="in-lastsix" value="${esc(d.lastSix||'')}"></label>
+      <label class="chk full" for="in-nonrech"><input type="checkbox" id="in-nonrech" ${d.nonRech?'checked':''}> Non-rechargeable (disposable)</label>
+    </div>
+    <h3 class="sec">Condition</h3>
+    <div class="fields">
+      <label class="f full" for="in-loc">Client location / area<input id="in-loc" value="${esc(d.location||'')}" placeholder="e.g. Kitchen, 2nd floor hallway"></label>
+      <label class="f full" for="in-arrival">Condition on arrival<textarea id="in-arrival" placeholder="Discharged, gauge in red, missing pin, corrosion…">${esc(d.arrival||'')}</textarea></label>
+    </div>
+    <div class="alerts" id="in-alerts"></div>
+    <div class="actions"><button class="btn pri" type="submit" id="in-save">Save and register next</button><span class="small muted" id="in-tech">Registered by: ${esc(curTech()||'you')}</span></div>
+    <datalist id="brandList">${[...new Set(['Amerex','Ansul','Badger','Buckeye','Kidde','Pyro-Chem','Strike First','Minimax','Gloria','Bavaria'].concat(S.units.map(u=>u.brand).filter(Boolean)))].map(b=>'<option value="'+esc(b)+'">').join('')}</datalist>
+  </form>
+  <div class="panel" id="in-batch">${intakeBatchHTML()}</div></div>`;
+  updateIntakeAlerts(); checkSeen(); renderPhotoBox();
+}
+function intakeBatchHTML(){
+  const batch=S.units.filter(u=>u.clientId===S.intakeClient&&u.received===S.intakeDate).sort((a,b)=>b.tag.localeCompare(a.tag));
+  return `
+    <h2>This intake</h2>
+    <p class="sub">${S.intakeClient? esc(clientById(S.intakeClient).name)+' · received '+fmtDate(S.intakeDate) : 'Select a client to see units received on this date.'}</p>
+    ${batch.length? `<div class="stats"><div class="stat"><b>${batch.length}</b><span>units</span></div>${Object.entries(batch.reduce((a,u)=>{const k=(TYPES[u.type]||{}).short||'?';a[k]=(a[k]||0)+1;return a},{})).map(([k,v])=>'<div class="stat"><b>'+v+'</b><span>'+esc(k)+'</span></div>').join('')}</div>
+    <div class="batch">${batch.map(u=>`<div class="row"><span class="tagno">${esc(u.tag)}</span><div style="min-width:0"><div>${esc(bm(u)||'—')} · ${esc(capStr(u))} ${esc((TYPES[u.type]||{}).short||'')}</div><div class="small muted mono">S/N ${esc(u.serial)} · mfg ${fmtYM(u.mfg)}</div></div><button class="btn sm" data-open="${esc(u.id)}">Open</button></div>`).join('')}</div>
+    <div class="actions"><button class="btn" id="in-receipt">Download intake receipt (PDF)</button></div>`
+    : `<div class="empty"><strong>No units yet</strong>Each extinguisher you save appears here with its workshop number. Write that number on the unit's tag.</div>`}`;
+}
+function readIntake(){ return {serial:$('#in-serial').value.trim(),brand:$('#in-brand').value.trim(),model:$('#in-model').value.trim(),type:$('#in-type').value,cap:$('#in-cap').value,capUnit:$('#in-capunit').value,mfg:$('#in-mfg').value,lastHydro:$('#in-lasthydro').value,lastSix:$('#in-lastsix').value,nonRech:$('#in-nonrech').checked,location:$('#in-loc').value.trim(),arrival:$('#in-arrival').value.trim(),ref:$('#in-ref').value.trim()} }
+function updateIntakeAlerts(){ const box=$('#in-alerts'); if(!box) return; const a=intakeAlerts(readIntake()); box.innerHTML=a.map(([k,m])=>'<div class="alert '+(k==='bad'?'bad':'')+'">'+esc(m)+'</div>').join('') }
+function checkSeen(){
+  const box=$('#in-seen'); if(!box) return; const sn=($('#in-serial').value||'').trim().toLowerCase(); if(sn.length<3){box.innerHTML='';return}
+  const hits=S.units.filter(u=>(u.serial||'').toLowerCase()===sn).sort((a,b)=>(b.received||'').localeCompare(a.received||''));
+  if(!hits.length){box.innerHTML='';return}
+  const open=hits.find(u=>u.status!=='delivered'); const last=hits[0];
+  box.innerHTML = open? '<div class="alert bad">This serial is already in the workshop as '+esc(open.tag)+' ('+esc(clientById(open.clientId).name)+', '+STATUS[open.status]+'). <button type="button" class="btn link" data-open="'+esc(open.id)+'">Open it</button></div>'
+    : '<div class="alert info">Serviced before as '+esc(last.tag)+' for '+esc(clientById(last.clientId).name)+' ('+fmtDate(last.received)+'). <button type="button" class="btn link" id="in-fill" data-from="'+esc(last.id)+'">Fill nameplate from that record</button></div>';
+}
+$('#v-intake').addEventListener('input',e=>{ e.target.classList&&e.target.classList.remove('filled','unsure'); if(e.target.id==='in-serial') checkSeen(); if(e.target.closest('#intakeForm')) updateIntakeAlerts(); if(e.target.id==='in-type'){ const t=TYPES[e.target.value]; if(t) $('#in-capunit').value=t.unit } });
+$('#v-intake').addEventListener('change',e=>{ if(e.target.id==='in-photofile'){ const f=e.target.files; if(f&&f.length) readPhoto(f); return } if(e.target.id==='in-client'){S.intakeClient=e.target.value; intakeDraft=readIntake(); renderIntake()} if(e.target.id==='in-date'){S.intakeDate=e.target.value; intakeDraft=readIntake(); renderIntake()} if(e.target.id==='in-type'||e.target.id==='in-nonrech') updateIntakeAlerts() });
+$('#v-intake').addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.dataset.open){ openUnit(t.dataset.open); return }
+  if(t.id==='in-photostop'){ photoCtl&&photoCtl.abort(); return }
+  if(t.id==='in-newclient'){ $('#in-newclient-box').hidden=false; $('#nc-name').focus() }
+  if(t.id==='nc-cancel'){ $('#in-newclient-box').hidden=true }
+  if(t.id==='nc-save'){ if(!guardWrite())return; const name=$('#nc-name').value.trim(); if(!name){toast('Enter the client name.');return}
+    try{ const ref=S.db.collection('clients').doc(); await ref.set({name,phone:$('#nc-phone').value.trim(),address:$('#nc-addr').value.trim(),createdAt:Date.now()}); S.intakeClient=ref.id; intakeDraft=readIntake(); S.fullIntake=true; schedule(); logAct('Client added',name,'From intake'); toast('Client added'); }catch(err){writeErr(err)} }
+  if(t.id==='in-fill'){ const u=unitById(t.dataset.from); if(!u)return; const s=u.svc||{}, it=s.items||{};
+    $('#in-brand').value=u.brand||''; $('#in-model').value=u.model||''; $('#in-type').value=u.type||''; $('#in-cap').value=u.cap||''; $('#in-capunit').value=u.capUnit||'lb'; $('#in-mfg').value=u.mfg||'';
+    $('#in-lasthydro').value = it.hydro&&s.hydroResult!=='fail'? (s.date||'').slice(0,7) : (u.lastHydro||'');
+    $('#in-lastsix').value = it.six? (s.date||'').slice(0,7) : (u.lastSix||''); $('#in-nonrech').checked=!!u.nonRech; $('#in-loc').value=u.location||''; updateIntakeAlerts(); toast('Nameplate filled from '+u.tag) }
+  if(t.id==='in-receipt'){ try{ await pdfIntake(S.intakeClient,S.intakeDate) }catch(err){toast(err.message)} }
+});
+$('#v-intake').addEventListener('submit',async e=>{
+  e.preventDefault(); if(!guardWrite())return;
+  const d=readIntake(); if(!S.intakeClient){toast('Select the client first.');return} if(!d.type){toast('Select the extinguisher type.');return}
+  if(!curTech()){toast('Select your name in "Who\'s working" at the top of the page.');return}
+  const btn=$('#in-save'); btn.disabled=true; btn.textContent='Saving…';
+  try{
+    const yr=new Date().getFullYear(); const n=await nextSeq('tag'+yr); const pre=((S.settings.prefix||'WS').toUpperCase().replace(/[-\s]*(\d{2}|\d{4})?[-\s]*$/,''))||'WS';
+    const tag=pre+'-'+String(yr).slice(2)+'-'+String(n).padStart(4,'0');
+    const ref=S.db.collection('units').doc();
+    await ref.set({...d, cap:d.cap?+d.cap:'', tag, clientId:S.intakeClient, received:S.intakeDate, receivedTime:($('#in-time').value||nowHM()), status:'received', tech:curTech(), by:S.myId||null, createdAt:Date.now(), updatedAt:Date.now(), svc:{}});
+    logAct('Registered',tag,clientById(S.intakeClient).name+' · S/N '+d.serial+' · '+((TYPES[d.type]||{}).short||'')+' '+(d.cap||'')+' '+d.capUnit);
+    toast('Saved as '+tag+'. Write it on the tag.');
+    intakeDraft={type:d.type,capUnit:d.capUnit,brand:d.brand,model:d.model,cap:d.cap,ref:d.ref};
+    renderIntake(); setTimeout(()=>{const s=$('#in-serial'); s&&s.focus()},30);
+  }catch(err){ writeErr(err); btn.disabled=false; btn.textContent='Save and register next' }
+});
+
+/* ---------- photo reader ---------- */
+let photoCtl=null;
+function renderPhotoBox(){
+  const b=$('#in-photo'); if(!b) return;
+  if(!S.imgLimits){ b.hidden=true; b.innerHTML=''; return }
+  const n=Math.min(S.imgLimits.maxCount||1,4); b.hidden=false;
+  b.innerHTML=`<div class="photo"><div><b>Read nameplate from photo</b><div class="small muted">Photograph the nameplate${n>1?', plus the hydro test label or service tag if it has one (up to '+n+' photos)':''}. Claude fills in the fields below. Check them against the unit before saving.</div></div>
+    <label class="btn" for="in-photofile">Take or choose photo</label><input type="file" id="in-photofile" accept="${esc((S.imgLimits.mediaTypes||['image/jpeg','image/png']).join(','))}" ${n>1?'multiple':''} hidden></div><div id="in-photostatus"></div>`;
+}
+async function shrink(file){
+  try{ const bmp=await createImageBitmap(file); const k=Math.min(1,2000/Math.max(bmp.width,bmp.height));
+    if(k===1&&file.size<=(S.imgLimits.maxInputBytes||5e6)&&/jpe?g|png/.test(file.type)) return file;
+    const c=document.createElement('canvas'); c.width=Math.round(bmp.width*k); c.height=Math.round(bmp.height*k);
+    c.getContext('2d').drawImage(bmp,0,0,c.width,c.height); const out=await new Promise(r=>c.toBlob(r,'image/jpeg',0.9)); return out||file }catch(e){ return file }
+}
+const PHOTO_PROMPT=`These photos show one portable fire extinguisher in a service workshop: its nameplate and possibly its hydrostatic test label, service tag or cylinder stamp. Read only what is printed or stamped. Never guess: use null for anything not visible or not legible.
+Return only a JSON object with these keys:
+"serial": serial number exactly as printed (string),
+"brand": manufacturer name,
+"model": model number,
+"type": one of "abc" (ABC / multipurpose dry chemical, stored pressure), "bc" (BC / regular dry chemical, stored pressure), "dcss" (dry chemical with stainless steel shell), "dccart" (cartridge-operated dry chemical), "co2" (carbon dioxide), "water" (stored-pressure water), "mist" (water mist), "foam" (AFFF or FFFP foam), "wetk" (wet chemical, Class K), "clean" (clean agent or halogenated, e.g. Halotron, FE-36), "powd" (Class D dry powder),
+"capacity": agent capacity as a number,
+"capacityUnit": "lb", "kg", "gal" or "L",
+"mfgDate": manufacture date as "YYYY-MM", or "YYYY" if only the year is shown,
+"lastHydro": most recent hydrostatic test date shown, "YYYY-MM" or "YYYY",
+"lastSix": most recent 6-year maintenance date shown on a label, "YYYY-MM" or "YYYY",
+"nonRechargeable": true if marked non-rechargeable or disposable, false if marked rechargeable, else null,
+"unsure": array of the key names you are not confident about,
+"note": one short sentence on anything the technician should double-check, or null.`;
+async function readPhoto(files){
+  const max=Math.min(S.imgLimits.maxCount||1,4); const list=[...files].slice(0,max);
+  const st=()=>$('#in-photostatus');
+  photoCtl&&photoCtl.abort(); photoCtl=new AbortController(); const ctl=photoCtl;
+  st().innerHTML='<div class="alert info">Reading '+list.length+' photo'+(list.length>1?'s':'')+'… <button type="button" class="btn link" id="in-photostop">Stop</button></div>';
+  try{
+    const blobs=await Promise.all(list.map(shrink));
+    const r=await S.sample.json(PHOTO_PROMPT,{images:blobs,signal:ctl.signal,modelTier:'default',cache:false});
+    const n=applyPhoto(r);
+    const box=st(); if(!box) return;
+    box.innerHTML = n ? '<div class="alert info">Filled '+n+' field'+(n>1?'s':'')+'.<span class="legend" style="background:var(--ok-bg)"></span>read clearly<span class="legend" style="background:var(--warn-bg)"></span>check against the unit'+(r&&r.note?'<br>'+esc(r.note):'')+'</div>'
+      : '<div class="alert">Nothing could be read from that photo. Take it straight on, close up, without glare, and try again.</div>';
+  }catch(e){
+    const box=st(); const code=e&&e.code; if(code==='cancelled'){ if(box) box.innerHTML=''; return }
+    if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed','images_unavailable'].includes(code)){ S.imgLimits=null; renderPhotoBox(); toast('Photo reading is not available for this account.'); return }
+    const msg={image_rejected:'That photo could not be used. Try a JPG or PNG under the size limit.',rate_limited:'Too many photo reads right now. Wait a minute and try again.',session_expired:'Your session expired. Sign in to claude.ai again.',refused:'Claude could not read this photo. Try a different one.',invalid_json:'The reading came back incomplete. Try again.',empty_completion:'Nothing could be read from that photo. Try a closer, sharper photo.'}[code]||'Connection problem while reading the photo. Try again.';
+    if(box) box.innerHTML='<div class="alert">'+esc(msg)+'</div>';
+  }finally{ const f=$('#in-photofile'); if(f) f.value='' }
+}
+function applyPhoto(r){
+  if(!r||typeof r!=='object') return 0;
+  const unsure=new Set(Array.isArray(r.unsure)?r.unsure:[]);
+  const ymv=v=>{ if(v==null) return null; v=String(v).trim(); let m=v.match(/^(\d{4})-(\d{1,2})/); if(m&&+m[2]>=1&&+m[2]<=12) return m[1]+'-'+m[2].padStart(2,'0'); m=v.match(/^(\d{4})$/); if(m) return m[1]+'-01'; return null };
+  ['mfgDate','lastHydro','lastSix'].forEach(k=>{ if(r[k]!=null&&/^\d{4}$/.test(String(r[k]).trim())) unsure.add(k) });
+  let n=0;
+  const put=(id,val,key)=>{ if(val==null||val==='') return; const el=$('#'+id); if(!el) return; el.value=val; if(el.value!==String(val)) return; el.classList.remove('filled','unsure'); el.classList.add(unsure.has(key)?'unsure':'filled'); n++ };
+  const str=v=>v==null?null:String(v).trim()||null;
+  put('in-serial',str(r.serial),'serial'); put('in-brand',str(r.brand),'brand'); put('in-model',str(r.model),'model');
+  if(r.type&&TYPES[r.type]){ put('in-type',r.type,'type'); $('#in-capunit').value=TYPES[r.type].unit }
+  if(r.capacity!=null&&r.capacity!==''&&!isNaN(+r.capacity)) put('in-cap',String(+r.capacity),'capacity');
+  if(['lb','kg','gal','L'].includes(r.capacityUnit)){ const el=$('#in-capunit'); el.value=r.capacityUnit; el.classList.add(unsure.has('capacityUnit')?'unsure':'filled') }
+  put('in-mfg',ymv(r.mfgDate),'mfgDate'); put('in-lasthydro',ymv(r.lastHydro),'lastHydro'); put('in-lastsix',ymv(r.lastSix),'lastSix');
+  if(typeof r.nonRechargeable==='boolean') $('#in-nonrech').checked=r.nonRechargeable;
+  updateIntakeAlerts(); checkSeen();
+  return n;
+}
+
+/* ---------- WORKSHOP ---------- */
+function filteredUnits(){
+  const q=S.wsQuery.trim().toLowerCase();
+  return S.units.filter(u=>{
+    if(S.wsFilter==='open'&&u.status==='delivered') return false;
+    if(['received','in_service','ready','delivered'].includes(S.wsFilter)&&u.status!==S.wsFilter) return false;
+    if(S.wsFilter==='condemned'&&!(u.status!=='delivered'&&u.svc&&u.svc.condemned)) return false;
+    if(S.wsClient&&u.clientId!==S.wsClient) return false;
+    if(q){ const hay=[u.tag,u.serial,u.brand,u.model,clientById(u.clientId).name,u.location].join(' ').toLowerCase(); if(!hay.includes(q)) return false }
+    return true;
+  }).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+}
+function statusCell(u){ const bad=u.svc&&u.svc.condemned; return '<span class="pill st-'+u.status+'">'+STATUS[u.status]+'</span>'+(bad?' <span class="pill st-bad">Condemned</span>':'') }
+function renderWorkshop(){
+  const el=$('#v-workshop'); const list=filteredUnits();
+  const cnt=k=>S.units.filter(u=>u.status===k).length;
+  const segs=[['open','All open'],['received','Received'],['in_service','In service'],['ready','Ready'],['condemned','Condemned'],['delivered','Delivered'],['all','All']];
+  const m=nowMonth(); const dl=S.units.filter(u=>u.status==='delivered');
+  const cards=[['received','Received',cnt('received'),'waiting for service'],['in_service','In service',cnt('in_service'),'on the bench'],['ready','Ready to deliver',cnt('ready'),'waiting for delivery note'],
+    ['condemned','Condemned',S.units.filter(u=>u.status!=='delivered'&&u.svc&&u.svc.condemned).length,'in workshop, not yet returned'],['delivered','Delivered',dl.length,dl.filter(u=>(u.deliveredAt||'').slice(0,7)===m).length+' this month']];
+  el.innerHTML=`<div class="counters">${cards.map(([k,l,n,sub])=>'<button type="button" class="counter c-'+k+'" data-f="'+k+'" aria-pressed="'+(S.wsFilter===k)+'"><b>'+n+'</b><span class="cl">'+l+'</span><span class="cs">'+esc(sub)+'</span></button>').join('')}</div>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="Status filter">${segs.map(([k,l])=>'<button type="button" data-f="'+k+'" aria-pressed="'+(S.wsFilter===k)+'">'+l+'</button>').join('')}</div>
+    <select id="ws-client" aria-label="Client">${clientOptions(S.wsClient,'All clients')}</select>
+    <input type="search" id="ws-q" placeholder="Search workshop no., serial, brand, client" value="${esc(S.wsQuery)}" aria-label="Search">
+    <button class="btn sm" id="ws-csv">Export CSV</button>
+  </div>
+  <div class="tablewrap">${list.length? `<table class="t"><thead><tr><th>Workshop no.</th><th>Client</th><th>Type</th><th>Brand / model</th><th>Serial</th><th>Cap.</th><th>Mfg</th><th>Received</th><th>Status</th><th>Technician</th></tr></thead><tbody>
+    ${list.map(u=>`<tr class="click" data-open="${esc(u.id)}" tabindex="0"><td class="nw"><span class="tagno">${esc(u.tag)}</span></td><td>${esc(clientById(u.clientId).name)}</td><td class="nw">${esc((TYPES[u.type]||{}).short||'')}</td><td>${esc(bm(u))}</td><td class="mono">${esc(u.serial)}</td><td class="nw">${esc(capStr(u))}</td><td class="nw">${fmtYM(u.mfg)}</td><td class="nw">${fmtDT(u.received,u.receivedTime)}</td><td class="nw">${statusCell(u)}<div class="small muted">${lastStamp(u)}</div></td><td>${esc((u.svc&&u.svc.tech)||u.tech||'')}</td></tr>`).join('')}
+    </tbody></table>` : `<div class="empty"><strong>${S.units.length?'Nothing matches these filters':'No extinguishers registered yet'}</strong>${S.units.length?'Change the status, client or search above.':'Register units on the Intake tab. They show up here for service.'}</div>`}</div>`;
+}
+$('#v-workshop').addEventListener('click',async e=>{
+  const f=e.target.closest('[data-f]'); if(f){S.wsFilter=f.dataset.f; renderWorkshop(); return}
+  const r=e.target.closest('[data-open]'); if(r){openUnit(r.dataset.open);return}
+  if(e.target.id==='ws-csv'){ const rows=[['Workshop no','Client','Type','Brand','Model','Serial','Capacity','Unit','Mfg','Last hydro','Received','Received time','Service started','Ready','Delivered','Turnaround (h)','Status','Services','Agent & parts','Condemned','Reason','Next annual','Next hydro','Next 6-yr','Technician','Delivery note']]
+      .concat(filteredUnits().map(u=>{const s=u.svc||{};return [u.tag,clientById(u.clientId).name,(TYPES[u.type]||{}).label,u.brand,u.model,u.serial,u.cap,u.capUnit,u.mfg,u.lastHydro,u.received,u.receivedTime||'',fmtDT(u.startedAt,u.startedTime).replace('—',''),fmtDT(u.readyAt,u.readyTime).replace('—',''),fmtDT(u.deliveredAt,u.deliveredTime).replace('—',''),(h=>h==null?'':h.toFixed(1))(hoursBetween(u.received,u.receivedTime,u.readyAt,u.readyTime)),STATUS[u.status],svcSummary(u),agentStr(u),s.condemned?'Yes':'',s.condemnReason||'',s.dueAnnual||'',s.dueHydro||'',s.dueSix||'',s.tech||u.tech||'',u.noteNo||'']}));
+    const csv=rows.map(r=>r.map(v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')).join('\r\n');
+    await saveFile('extinguishers-'+today()+'.csv', csv) }
+});
+$('#v-workshop').addEventListener('keydown',e=>{ if(e.key==='Enter'){const r=e.target.closest('tr[data-open]'); if(r) openUnit(r.dataset.open)} });
+$('#v-workshop').addEventListener('change',e=>{ if(e.target.id==='ws-client'){S.wsClient=e.target.value;renderWorkshop()} });
+$('#v-workshop').addEventListener('input',e=>{ if(e.target.id==='ws-q'){S.wsQuery=e.target.value; const pos=e.target.selectionStart; renderWorkshop(); const q=$('#ws-q'); q.focus(); q.setSelectionRange(pos,pos)} });
+
+/* ---------- service drawer ---------- */
+let D=null; // {id, svc}
+function openUnit(id){
+  const u=unitById(id); if(!u) return; const s=JSON.parse(JSON.stringify(u.svc||{}));
+  s.items=s.items||{}; s.parts=s.parts||[]; s.date=s.date||today(); const t=TYPES[u.type]||{};
+  s.agentName=s.agentName||t.agent||''; s.agentUnit=s.agentUnit||u.capUnit||t.unit||'lb'; s.tech=s.tech||(isTechName(curTech())?curTech():'');
+  D={id, svc:s, confirmDel:false, editId:false}; drawDrawer();
+}
+function closeDrawer(){ D=null; $('#drawerRoot').innerHTML=''; }
+function drawDrawer(){
+  const u=unitById(D.id); if(!u){closeDrawer();return} const s=D.svc; const locked=u.status==='delivered'; const dis=locked?'disabled':'';
+  const due=computeDues(u,s); const t=TYPES[u.type]||{}; const al=intakeAlerts(u);
+  $('#drawerRoot').innerHTML=`<div class="scrim" data-close="1"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Service record ${esc(u.tag)}">
+  <div class="dhead"><div style="flex:1;min-width:0"><div class="small" style="margin-bottom:4px"><span class="tagno">${esc(u.tag)}</span> &nbsp;${statusCell(u)}</div>
+    <div class="t1">${esc(bm(u)||'Extinguisher')} · ${esc(capStr(u))} ${esc(t.short||'')}</div>
+    <div class="small muted">${esc(clientById(u.clientId).name)} · S/N <span class="mono">${esc(u.serial)}</span> · mfg ${fmtYM(u.mfg)}${u.noteNo?' · '+esc(u.noteNo):''}${u.prevNotes&&u.prevNotes.length?' · cancelled: '+esc(u.prevNotes.join(', ')):''}</div>
+    <div class="tl">${[['Received',u.received,u.receivedTime],['Service started',u.startedAt,u.startedTime],['Ready',u.readyAt,u.readyTime],['Delivered',u.deliveredAt,u.deliveredTime]].map(([k,d,t])=>'<span><b>'+k+'</b>'+(d?fmtDT(d,t):'—')+'</span>').join('')}${hoursBetween(u.received,u.receivedTime,u.readyAt,u.readyTime)!=null&&['ready','delivered'].includes(u.status)?'<span><b>Turnaround</b>'+fmtDur(hoursBetween(u.received,u.receivedTime,u.readyAt,u.readyTime))+'</span>':''}</div></div>
+    <button class="btn sm" data-close="1" aria-label="Close">Close</button></div>
+  <div class="dbody">
+    ${locked?'<div class="alerts"><div class="alert info">Delivered on '+esc(u.noteNo||'')+'. The record is locked.</div></div>':''}
+    ${al.length&&!locked&&u.status!=='ready'?'<div class="alerts">'+al.map(([k,m])=>'<div class="alert '+(k==='bad'?'bad':'')+'">'+esc(m)+'</div>').join('')+'</div>':''}
+    ${u.arrival?'<p class="small" style="margin:12px 0 0"><b>On arrival:</b> '+esc(u.arrival)+'</p>':''}
+    <h3 class="sec" style="border-top:0;padding-top:0;margin-top:16px">Service performed</h3>
+    <div class="chks">${SERVICES.map(([k,l])=>'<label class="chk" for="sv-'+k+'"><input type="checkbox" id="sv-'+k+'" data-item="'+k+'" '+(s.items[k]?'checked':'')+' '+dis+'> '+l+'</label>').join('')}</div>
+    <div class="fields" style="margin-top:10px">
+      <label class="f" for="sv-date">Service date<input type="date" id="sv-date" value="${esc(s.date)}" ${dis}></label>
+      <label class="f" for="sv-tech">Technician<select id="sv-tech" ${dis}>${(s.tech?'':'<option value="" selected>Select technician…</option>')+(techs().includes(s.tech)?techs():[s.tech].concat(techs())).filter(Boolean).map(x=>'<option'+(x===s.tech?' selected':'')+'>'+esc(x)+'</option>').join('')}</select></label>
+    </div>
+    <div id="hydroBox" ${s.items.hydro?'':'hidden'}><h3 class="sec">Hydrostatic test</h3><div class="fields">
+      <label class="f" for="sv-psi">Test pressure (psi)<input type="number" id="sv-psi" value="${esc(s.hydroPsi||'')}" ${dis}></label>
+      <label class="f" for="sv-hres">Result<select id="sv-hres" ${dis}>${['pass','fail'].map(x=>'<option value="'+x+'"'+(s.hydroResult===x?' selected':'')+'>'+(x==='pass'?'Pass':'Fail')+'</option>').join('')}</select></label></div></div>
+    <h3 class="sec">Agent and parts</h3>
+    <div class="fields">
+      <label class="f full" for="sv-agent">Agent<input id="sv-agent" value="${esc(s.agentName)}" ${dis}></label>
+      <label class="f" for="sv-qty">Quantity used<div class="inline"><input type="number" step="0.1" min="0" id="sv-qty" value="${esc(s.agentQty||'')}" ${dis}><select id="sv-aunit" style="width:76px" ${dis}>${unitSel(s.agentUnit,['lb','kg','gal','L'])}</select></div></label>
+    </div>
+    <label class="f" for="sv-parts" style="margin-top:10px">Parts replaced <span class="hint">(tap to add, or type separated by commas)</span><input id="sv-parts" value="${esc(s.parts.join(', '))}" ${dis}></label>
+    ${locked?'':'<div class="quick">'+PARTS.map(p=>'<button type="button" class="chip'+(s.parts.includes(p)?' on':'')+'" data-part="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div>'}
+    <label class="f" for="sv-find" style="margin-top:12px">Findings / remarks<textarea id="sv-find" ${dis}>${esc(s.findings||'')}</textarea></label>
+    <h3 class="sec">Result</h3>
+    <label class="chk" for="sv-cond"><input type="checkbox" id="sv-cond" ${s.condemned?'checked':''} ${dis}> <b>Condemned: remove from service</b></label>
+    <div id="condBox" ${s.condemned?'':'hidden'} style="margin-top:8px"><label class="f" for="sv-reason">Reason<select id="sv-reason" ${dis}><option value="">Select reason…</option>${REASONS.map(r=>'<option'+(s.condemnReason===r?' selected':'')+'>'+esc(r)+'</option>').join('')}</select></label></div>
+    <div id="dueBox" ${s.condemned?'hidden':''}><p class="small muted" style="margin:12px 0 6px">Next due dates, calculated from NFPA 10 intervals for ${esc(t.label||'this type')}${t.hydro?' (hydro every '+t.hydro+' years'+(t.six?', 6-year maintenance':'')+')':''}. Change if the label shows otherwise.</p>
+    <div class="dues">
+      <label class="f" for="sv-dann">Next annual<input type="month" id="sv-dann" value="${esc(s.dueAnnual||due.annual)}" ${dis}></label>
+      <label class="f" for="sv-dhyd">${u.nonRech?'End of 12-yr life':'Next hydro test'}<input type="month" id="sv-dhyd" value="${esc(s.dueHydro||(u.nonRech?due.life:due.hydro))}" ${dis}></label>
+      <label class="f" for="sv-dsix">Next 6-yr maint.<input type="month" id="sv-dsix" value="${esc(s.dueSix||due.six)}" ${t.six&&!u.nonRech?dis:'disabled'}></label>
+    </div><button type="button" class="btn link small" id="sv-recalc" ${dis}>Recalculate due dates</button></div>
+    ${locked?'':`<details style="margin-top:18px"><summary class="small" style="cursor:pointer;font-weight:600">Correct nameplate data</summary>
+      <div class="fields" style="margin-top:10px">
+        <label class="f" for="ed-serial">Serial<input id="ed-serial" value="${esc(u.serial)}"></label>
+        <label class="f" for="ed-brand">Brand<input id="ed-brand" value="${esc(u.brand||'')}"></label>
+        <label class="f" for="ed-model">Model<input id="ed-model" value="${esc(u.model||'')}"></label>
+        <label class="f" for="ed-type">Type<select id="ed-type">${typeOptions(u.type)}</select></label>
+        <label class="f" for="ed-cap">Capacity<div class="inline"><input type="number" step="0.1" id="ed-cap" value="${esc(u.cap)}"><select id="ed-capunit" style="width:76px">${unitSel(u.capUnit||'lb',['lb','kg','gal','L'])}</select></div></label>
+        <label class="f" for="ed-mfg">Manufacture date<input type="month" id="ed-mfg" value="${esc(u.mfg||'')}"></label>
+        <label class="f" for="ed-lh">Last hydro<input type="month" id="ed-lh" value="${esc(u.lastHydro||'')}"></label>
+        <label class="f" for="ed-ls">Last 6-yr<input type="month" id="ed-ls" value="${esc(u.lastSix||'')}"></label>
+        <label class="f full" for="ed-loc">Client location<input id="ed-loc" value="${esc(u.location||'')}"></label>
+      </div>
+      <div class="actions"><button type="button" class="btn sm" id="ed-save">Save nameplate</button>
+      ${D.confirmDel?'<span class="confirm">Delete '+esc(u.tag)+' permanently? <button type="button" class="btn sm" id="ed-delyes">Delete</button><button type="button" class="btn sm" id="ed-delno">Keep</button></span>':(S.isOwner?'<button type="button" class="btn sm link" id="ed-del">Delete this record</button>':'')}</div></details>`}
+  </div>
+  ${locked?'':`<div class="dfoot">
+    <button class="btn" id="sv-save">Save</button>
+    ${u.status==='received'?'<button class="btn" id="sv-start">Save and start service</button>':''}
+    ${u.status!=='ready'?'<button class="btn pri" id="sv-ready">Save and mark ready</button>':'<button class="btn" id="sv-reopen">Back to in service</button>'}
+  </div>`}
+  </aside>`;
+}
+function readSvc(){
+  const s=D.svc; const g=id=>{const e=$('#'+id);return e?e.value:''};
+  SERVICES.forEach(([k])=>{ const e=$('#sv-'+k); if(e) s.items[k]=e.checked });
+  s.date=g('sv-date'); s.tech=g('sv-tech'); s.hydroPsi=g('sv-psi'); s.hydroResult=g('sv-hres')||'pass'; s.agentName=g('sv-agent'); s.agentQty=g('sv-qty'); s.agentUnit=g('sv-aunit');
+  s.parts=g('sv-parts').split(',').map(x=>x.trim()).filter(Boolean); s.findings=g('sv-find'); s.condemned=$('#sv-cond')?$('#sv-cond').checked:false; s.condemnReason=g('sv-reason');
+  s.dueAnnual=g('sv-dann'); s.dueHydro=g('sv-dhyd'); s.dueSix=$('#sv-dsix')&&!$('#sv-dsix').disabled?g('sv-dsix'):'';
+  return s;
+}
+async function saveSvc(status){
+  if(!guardWrite()) return; const u=unitById(D.id); const s=readSvc();
+  if(status==='ready'){
+    const any=SERVICES.some(([k])=>s.items[k]);
+    if(!any&&!s.condemned){toast('Tick at least one service performed, or mark the unit condemned.');return}
+    if(!s.tech){toast('Select the technician who did the service.');return}
+    if(s.condemned&&!s.condemnReason){toast('Select the reason it is condemned.');return}
+    if(s.items.hydro&&s.hydroResult==='fail'&&!s.condemned){toast('A failed hydrostatic test means the unit is condemned. Tick Condemned.');return}
+  }
+  const patch={svc:s, updatedAt:Date.now(), updatedBy:S.myId||null};
+  if(status){ patch.status=status; if(status==='ready'){ patch.readyAt=today(); patch.readyTime=nowHM() } if(status==='in_service'&&!u.startedAt){ patch.startedAt=today(); patch.startedTime=nowHM() } }
+  try{ await S.db.doc('units/'+D.id).update(patch);
+    const act=status==='ready'?'Marked ready':status==='in_service'?(u.status==='ready'?'Back to in service':'Service started'):'Service saved'; const dd=svcDiff(u.svc,s);
+    if(status||dd) logAct(act,u.tag,dd||(status?STATUS[u.status]+' → '+STATUS[status]:''));
+    toast(status==='ready'?u.tag+' is ready for delivery':status==='in_service'?u.tag+' is in service':'Saved'); if(status==='ready') closeDrawer(); else drawDrawer() }catch(e){writeErr(e)}
+}
+$('#drawerRoot').addEventListener('click',async e=>{
+  const t=e.target; if(!D) return;
+  if(t.dataset.close){closeDrawer();return}
+  if(t.dataset.part){ readSvc(); const p=t.dataset.part; const i=D.svc.parts.indexOf(p); i>=0?D.svc.parts.splice(i,1):D.svc.parts.push(p); $('#sv-parts').value=D.svc.parts.join(', '); t.classList.toggle('on'); return }
+  if(t.id==='sv-recalc'){ readSvc(); const u=unitById(D.id); const d=computeDues(u,D.svc); $('#sv-dann').value=d.annual; $('#sv-dhyd').value=u.nonRech?d.life:d.hydro; if(!$('#sv-dsix').disabled)$('#sv-dsix').value=d.six; return }
+  if(t.id==='sv-save') saveSvc(null);
+  if(t.id==='sv-start') saveSvc('in_service');
+  if(t.id==='sv-ready') saveSvc('ready');
+  if(t.id==='sv-reopen') saveSvc('in_service');
+  if(t.id==='ed-del'){ if(!S.isOwner) return; D.confirmDel=true; readSvc(); drawDrawer(); $('#drawerRoot details').open=true }
+  if(t.id==='ed-delno'){ D.confirmDel=false; readSvc(); drawDrawer() }
+  if(t.id==='ed-delyes'){ if(!S.isOwner||!guardWrite())return; const u=unitById(D.id); try{ await S.db.doc('units/'+D.id).delete(); logAct('Record deleted',u.tag,clientById(u.clientId).name+' · S/N '+u.serial+' · '+STATUS[u.status]); toast('Deleted '+u.tag); closeDrawer() }catch(err){writeErr(err)} }
+  if(t.id==='ed-save'){ if(!guardWrite())return; const u=unitById(D.id); readSvc();
+    const patch={serial:$('#ed-serial').value.trim(),brand:$('#ed-brand').value.trim(),model:$('#ed-model').value.trim(),type:$('#ed-type').value,cap:+$('#ed-cap').value||'',capUnit:$('#ed-capunit').value,mfg:$('#ed-mfg').value,lastHydro:$('#ed-lh').value,lastSix:$('#ed-ls').value,location:$('#ed-loc').value.trim(),updatedAt:Date.now()};
+    try{ await S.db.doc('units/'+D.id).update(patch); const dd=diff(u,patch,NP_LABELS); if(dd) logAct('Nameplate edited',u.tag,dd); toast('Nameplate updated') }catch(err){writeErr(err)} }
+});
+$('#drawerRoot').addEventListener('change',e=>{ if(!D) return;
+  if(e.target.id==='sv-hydro'){ $('#hydroBox').hidden=!e.target.checked }
+  if(e.target.id==='sv-cond'){ $('#condBox').hidden=!e.target.checked; $('#dueBox').hidden=e.target.checked }
+  if(e.target.id==='sv-hres'&&e.target.value==='fail'){ $('#sv-cond').checked=true; $('#condBox').hidden=false; $('#dueBox').hidden=true; $('#sv-reason').value='Failed hydrostatic test' }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&D) closeDrawer() });
+
+/* ---------- DELIVERY ---------- */
+let dnSel=new Set(); let dnKey='';
+function renderDelivery(){
+  const el=$('#v-delivery');
+  const ready=S.units.filter(u=>u.status==='ready'&&(!S.dnClient||u.clientId===S.dnClient)&&(!S.dnFrom||(u.readyAt||'')>=S.dnFrom)&&(!S.dnTo||(u.readyAt||'')<=S.dnTo)).sort((a,b)=>a.tag.localeCompare(b.tag));
+  const key=S.dnClient+'|'+S.dnFrom+'|'+S.dnTo+'|'+ready.map(u=>u.id).join(',');
+  const R=(S.reissue&&S.reissue.clientId===S.dnClient)?S.reissue:null;
+  if(key!==dnKey){ dnKey=key; dnSel=new Set(ready.map(u=>u.id).filter(id=>!R||R.ids.includes(id))) }
+  const byClient=S.units.filter(u=>u.status==='ready').reduce((a,u)=>{a[u.clientId]=(a[u.clientId]||0)+1;return a},{});
+  const notes=[...S.notes].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  el.innerHTML=`<div class="grid2">
+  <div class="panel">
+    <h2>${R?'Reissue '+esc(R.no):'New delivery note'}</h2><p class="sub">Pick the client. Units the technicians marked ready are listed with all their service data.</p>
+    ${S.reissue?'<div class="alert info" style="margin-bottom:12px">'+(R?'Reissuing cancelled note <b>'+esc(S.reissue.no)+'</b>. Its units are selected below. Fix anything needed by opening the unit in the Workshop tab, then create the new note.':'Cancelled note '+esc(S.reissue.no)+' belongs to '+esc(clientById(S.reissue.clientId).name)+'. Select that client to reissue it.')+' <button type="button" class="btn link" id="rs-stop">Stop reissue</button></div>':''}
+    <div class="fields">
+      <label class="f full" for="dn-client">Client<select id="dn-client">${'<option value="">Select client…</option>'+[...S.clients].sort((a,b)=>a.name.localeCompare(b.name)).map(c=>'<option value="'+esc(c.id)+'"'+(c.id===S.dnClient?' selected':'')+'>'+esc(c.name)+(byClient[c.id]?' ('+byClient[c.id]+' ready)':'')+'</option>').join('')}</select></label>
+      <label class="f" for="dn-from">Ready from<input type="date" id="dn-from" value="${esc(S.dnFrom)}"></label>
+      <label class="f" for="dn-to">Ready to<input type="date" id="dn-to" value="${esc(S.dnTo)}"></label>
+      <label class="f" for="dn-date">Delivery date<input type="date" id="dn-date" value="${today()}"></label>
+      <label class="f" for="dn-ref">Client ref. / PO<input id="dn-ref" value="${esc(R?R.clientRef||'':(ready[0]&&ready[0].ref||''))}"></label>
+      <label class="f" for="dn-by">Delivered by<input id="dn-by" value="${esc(R&&R.deliveredBy||curTech())}"></label>
+      <label class="f" for="dn-recv">Received by <span class="hint">(or sign on paper)</span><input id="dn-recv" value="${esc(R&&R.receivedBy||'')}"></label>
+      <label class="f full" for="dn-rem">Remarks<textarea id="dn-rem" placeholder="optional">${esc(R&&R.remarks||'')}</textarea></label>
+    </div>
+    <div class="actions"><button class="btn pri" id="dn-create" ${S.dnClient&&dnSel.size?'':'disabled'}>Create note and download PDF</button><span class="small muted">${S.dnClient?dnSel.size+' of '+ready.length+' units selected':''}</span></div>
+  </div>
+  <div class="panel" style="padding:0;overflow:hidden">
+    <div style="padding:18px 18px 10px"><h2>Ready to deliver</h2><p class="sub" style="margin:0">${S.dnClient?esc(clientById(S.dnClient).name):'All clients'}${S.dnFrom||S.dnTo?' · ready '+(S.dnFrom?fmtDate(S.dnFrom):'…')+' to '+(S.dnTo?fmtDate(S.dnTo):'today'):''}</p></div>
+    ${ready.length?`<div style="overflow-x:auto"><table class="t"><thead><tr><th>${S.dnClient?'<input type="checkbox" id="dn-all" aria-label="Select all" '+(dnSel.size===ready.length?'checked':'')+'>':''}</th><th>Workshop no.</th>${S.dnClient?'':'<th>Client</th>'}<th>Unit</th><th>Serial</th><th>Service</th><th>Ready</th></tr></thead><tbody>
+      ${ready.map(u=>`<tr><td>${S.dnClient?'<input type="checkbox" data-sel="'+esc(u.id)+'" aria-label="Include '+esc(u.tag)+'" '+(dnSel.has(u.id)?'checked':'')+'>':''}</td><td class="nw"><span class="tagno">${esc(u.tag)}</span></td>${S.dnClient?'':'<td>'+esc(clientById(u.clientId).name)+'</td>'}<td>${esc(capStr(u))} ${esc((TYPES[u.type]||{}).short||'')}<div class="small muted">${esc(bm(u))}</div></td><td class="mono">${esc(u.serial)}</td><td>${u.svc&&u.svc.condemned?'<span class="pill st-bad">Condemned</span><div class="small muted">'+esc(u.svc.condemnReason||'')+'</div>':esc(svcSummary(u))}</td><td class="nw">${fmtDT(u.readyAt,u.readyTime)}</td></tr>`).join('')}
+    </tbody></table></div>`:`<div class="empty"><strong>Nothing ready${S.dnClient?' for this client':''}</strong>Units appear here when a technician marks them ready in the Workshop.</div>`}
+  </div></div>
+  <div class="panel" style="margin-top:20px;padding:0;overflow:hidden"><div style="padding:18px 18px 10px"><h2>Issued delivery notes</h2></div>
+    ${notes.length?`<div style="overflow-x:auto"><table class="t"><thead><tr><th>No.</th><th>Date</th><th>Client</th><th>Units</th><th>Condemned</th><th>Delivered by</th><th></th></tr></thead><tbody>
+    ${notes.map(n=>{const nc=n.unitIds.map(unitById).filter(u=>u&&u.svc&&u.svc.condemned).length;return `<tr${n.cancelled?' style="opacity:.7"':''}><td class="mono nw">${n.cancelled?'<s>'+esc(n.no)+'</s><div><span class="pill st-bad">Cancelled</span></div>':esc(n.no)}${n.replaces?'<div class="small muted">replaces '+esc(n.replaces)+'</div>':''}${n.replacedBy?'<div class="small muted">replaced by '+esc(n.replacedBy)+'</div>':''}</td><td class="nw">${fmtDate(n.date)}</td><td>${esc(clientById(n.clientId).name)}</td><td>${n.unitIds.length}</td><td>${nc?'<span class="st-bad" style="font-weight:700">'+nc+'</span>':'0'}</td><td>${esc(n.deliveredBy||'')}</td><td class="nw"><button class="btn sm" data-pdf="${esc(n.id)}">Delivery note PDF</button> ${nc?'<button class="btn sm" data-cpdf="'+esc(n.id)+'">Condemned report</button>':''}${S.isOwner&&!n.cancelled&&S.cancelNote!==n.id?' <button class="btn sm link" data-cnask="'+esc(n.id)+'">Cancel and reissue</button>':''}</td></tr>${n.cancelled&&n.cancelReason?'<tr><td></td><td colspan="6" class="small muted" style="border-top:0;padding-top:0">Cancelled '+fmtDT(n.cancelledAt,n.cancelledTime)+': '+esc(n.cancelReason)+'</td></tr>':''}${S.cancelNote===n.id?'<tr><td colspan="7" style="border-top:0"><div class="confirm"><span>Cancel <b>'+esc(n.no)+'</b>? Its '+n.unitIds.length+' units go back to Ready so a corrected note can be issued.</span><input id="cn-reason" placeholder="Reason (required)" style="flex:1 1 200px;width:auto"><button class="btn sm" data-cnyes="'+esc(n.id)+'">Cancel note</button><button class="btn sm" data-cnno="1">Keep note</button></div></td></tr>':''}`}).join('')}
+    </tbody></table></div>`:'<div class="empty"><strong>No delivery notes yet</strong>Notes you create are kept here so you can download them again.</div>'}</div>`;
+}
+$('#v-delivery').addEventListener('change',e=>{ const id=e.target.id;
+  if(id==='dn-client'){S.dnClient=e.target.value;renderDelivery()} if(id==='dn-from'){S.dnFrom=e.target.value;renderDelivery()} if(id==='dn-to'){S.dnTo=e.target.value;renderDelivery()}
+  if(e.target.dataset.sel){ e.target.checked?dnSel.add(e.target.dataset.sel):dnSel.delete(e.target.dataset.sel); const b=$('#dn-create'); b.disabled=!dnSel.size; b.nextElementSibling.textContent=dnSel.size+' units selected' }
+  if(id==='dn-all'){ const boxes=[...document.querySelectorAll('[data-sel]')]; boxes.forEach(x=>{x.checked=e.target.checked; e.target.checked?dnSel.add(x.dataset.sel):dnSel.delete(x.dataset.sel)}); $('#dn-create').disabled=!dnSel.size }
+});
+$('#v-delivery').addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.dataset.pdf){ const n=S.notes.find(x=>x.id===t.dataset.pdf); try{await pdfDelivery(n)}catch(err){toast(err.message)} }
+  if(t.dataset.cpdf){ const n=S.notes.find(x=>x.id===t.dataset.cpdf); try{await pdfCondemned(n)}catch(err){toast(err.message)} }
+  if(t.id==='rs-stop'){ S.reissue=null; dnKey=''; renderDelivery(); return }
+  if(t.dataset.cnask){ if(!S.isOwner) return; S.cancelNote=t.dataset.cnask; renderDelivery(); const r=$('#cn-reason'); r&&r.focus(); return }
+  if(t.dataset.cnno){ S.cancelNote=null; renderDelivery(); return }
+  if(t.dataset.cnyes){
+    if(!S.isOwner||!guardWrite()) return; const n=S.notes.find(x=>x.id===t.dataset.cnyes); if(!n||n.cancelled) return;
+    const reason=($('#cn-reason').value||'').trim(); if(!reason){ toast('Enter the reason for cancelling.'); $('#cn-reason').focus(); return }
+    t.disabled=true;
+    try{
+      await S.db.doc('notes/'+n.id).update({cancelled:true,cancelledAt:today(),cancelledTime:nowHM(),cancelReason:reason,cancelledBy:S.myId||null});
+      for(const id of n.unitIds){ const u=unitById(id); if(!u||u.noteId!==n.id) continue;
+        await S.db.doc('units/'+id).update({status:'ready',noteId:null,noteNo:null,deliveredAt:null,deliveredTime:null,prevNotes:(u.prevNotes||[]).concat(n.no),updatedAt:Date.now()}) }
+      logAct('Delivery note cancelled',n.no,clientById(n.clientId).name+' · Reason: '+reason);
+      S.cancelNote=null; S.reissue={no:n.no,noteId:n.id,clientId:n.clientId,ids:n.unitIds.slice(),clientRef:n.clientRef,deliveredBy:n.deliveredBy,receivedBy:n.receivedBy,remarks:n.remarks};
+      S.dnClient=n.clientId; S.dnFrom=''; S.dnTo=''; dnKey='';
+      toast(n.no+' cancelled. Its units are back in Ready.'); window.scrollTo({top:0,behavior:'smooth'});
+    }catch(err){ writeErr(err) }
+    renderDelivery(); return
+  }
+  if(t.id==='dn-create'){
+    if(!guardWrite())return; const ids=[...dnSel].filter(id=>{const u=unitById(id);return u&&u.status==='ready'}); if(!ids.length) return;
+    t.disabled=true; t.textContent='Creating…';
+    try{
+      const date=$('#dn-date').value||today(); const yr=date.slice(0,4); const n=await nextSeq('dn'+yr); const no='DN-'+yr+'-'+String(n).padStart(4,'0');
+      const ref=S.db.collection('notes').doc();
+      const note={no,date,clientId:S.dnClient,unitIds:ids,clientRef:$('#dn-ref').value.trim(),deliveredBy:$('#dn-by').value.trim(),receivedBy:$('#dn-recv').value.trim(),remarks:$('#dn-rem').value.trim(),createdAt:Date.now(),by:S.myId||null};
+      const RS=(S.reissue&&S.reissue.clientId===S.dnClient)?S.reissue:null; if(RS) note.replaces=RS.no;
+      await ref.set(note);
+      if(RS){ try{ await S.db.doc('notes/'+RS.noteId).update({replacedBy:no}) }catch(e){} S.reissue=null }
+      for(const id of ids){ await S.db.doc('units/'+id).update({status:'delivered',noteId:ref.id,noteNo:no,deliveredAt:date,deliveredTime:nowHM(),updatedAt:Date.now()}) }
+      logAct('Delivery note issued',no,clientById(S.dnClient).name+' · '+ids.length+' units'+(note.replaces?' · replaces '+note.replaces:''));
+      toast(no+' created'); dnKey='';
+      try{ await pdfDelivery({...note,id:ref.id}); if(ids.some(id=>{const u=unitById(id);return u&&u.svc&&u.svc.condemned})) await pdfCondemned({...note,id:ref.id}) }catch(err){toast(err.message)}
+    }catch(err){ writeErr(err) }
+    renderDelivery();
+  }
+});
+
+/* ---------- CLIENTS ---------- */
+function renderClients(){
+  const el=$('#v-clients'); const c=S.editClient? (S.clients.find(x=>x.id===S.editClient)||{}) : {};
+  const list=[...S.clients].sort((a,b)=>a.name.localeCompare(b.name));
+  const yr=today().slice(0,4); const has=f=>new Set(S.units.filter(f).map(u=>u.clientId));
+  const open=has(u=>u.status!=='delivered'), year=has(u=>(u.received||'').slice(0,4)===yr), ever=has(()=>true);
+  const ccards=[['received','Total clients',S.clients.length,'in your client list'],['in_service','In workshop now',S.clients.filter(c=>open.has(c.id)).length,'clients with units not yet delivered'],
+    ['ready','Serviced in '+yr,S.clients.filter(c=>year.has(c.id)).length,'clients with units received this year'],['delivered','No service yet',S.clients.filter(c=>!ever.has(c.id)).length,'never sent units to the workshop']];
+  const counters='<div class="counters" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">'+ccards.map(([k,l,n,sub])=>'<div class="counter c-'+k+'" style="cursor:default"><b>'+n+'</b><span class="cl">'+esc(l)+'</span><span class="cs">'+esc(sub)+'</span></div>').join('')+'</div>';
+  el.innerHTML=counters+`<div class="grid2">
+  <form class="panel" id="clForm"><h2>${S.editClient?'Edit client':'Add client'}</h2><p class="sub">Shown on intake receipts and delivery notes.</p>
+    <div class="fields">
+      <label class="f full" for="cl-name">Client name<input id="cl-name" required value="${esc(c.name||'')}"></label>
+      <label class="f full" for="cl-addr">Address<input id="cl-addr" value="${esc(c.address||'')}"></label>
+      <label class="f" for="cl-contact">Contact person<input id="cl-contact" value="${esc(c.contact||'')}"></label>
+      <label class="f" for="cl-phone">Phone<input id="cl-phone" value="${esc(c.phone||'')}"></label>
+      <label class="f full" for="cl-email">Email<input id="cl-email" type="email" value="${esc(c.email||'')}"></label>
+    </div>
+    <div class="actions"><button class="btn pri" type="submit">${S.editClient?'Save changes':'Add client'}</button>${S.editClient?'<button type="button" class="btn" id="cl-cancel">Cancel</button>':''}</div>
+  </form>
+  <div class="panel" style="padding:0;overflow:hidden"><div style="padding:18px 18px 10px"><h2>Clients</h2></div>
+  ${list.length?`<div style="overflow-x:auto"><table class="t"><thead><tr><th>Name</th><th>Contact</th><th>Phone</th><th>In workshop</th><th>Serviced</th><th></th></tr></thead><tbody>
+    ${list.map(x=>`<tr><td><b>${esc(x.name)}</b><div class="small muted">${esc(x.address||'')}</div></td><td>${esc(x.contact||'')}</td><td class="nw">${esc(x.phone||'')}</td><td>${S.units.filter(u=>u.clientId===x.id&&u.status!=='delivered').length}</td><td>${S.units.filter(u=>u.clientId===x.id).length}</td><td class="nw"><button class="btn sm" data-edit="${esc(x.id)}">Edit</button>${S.isOwner?(S.confirmClient===x.id?' <span class="confirm">Delete '+esc(x.name)+'? <button class="btn sm" data-cdel="'+esc(x.id)+'">Delete</button><button class="btn sm" data-ckeep="1">Keep</button></span>':' <button class="btn sm link" data-cdelask="'+esc(x.id)+'">Delete</button>'):''}</td></tr>`).join('')}
+  </tbody></table></div>`:'<div class="empty"><strong>No clients yet</strong>Add your first client here or straight from the Intake tab.</div>'}</div></div>`;
+}
+$('#v-clients').addEventListener('click',async e=>{ const t=e.target;
+  if(t.dataset.edit){S.editClient=t.dataset.edit;renderClients()} if(t.id==='cl-cancel'){S.editClient=null;renderClients()}
+  if(t.dataset.cdelask){ if(!S.isOwner) return; const id=t.dataset.cdelask; const n=S.units.filter(u=>u.clientId===id).length+S.notes.filter(x=>x.clientId===id).length;
+    if(n){ toast(clientById(id).name+' has service history, so it cannot be deleted. Edit it instead.'); return } S.confirmClient=id; renderClients() }
+  if(t.dataset.ckeep){ S.confirmClient=null; renderClients() }
+  if(t.dataset.cdel){ if(!S.isOwner||!guardWrite()) return; const id=t.dataset.cdel; const nm=clientById(id).name;
+    try{ await S.db.doc('clients/'+id).delete(); logAct('Client deleted',nm,''); if(S.editClient===id) S.editClient=null; if(S.intakeClient===id) S.intakeClient=''; S.confirmClient=null; toast('Deleted '+nm) }catch(err){writeErr(err)} }
+});
+$('#v-clients').addEventListener('submit',async e=>{ e.preventDefault(); if(!guardWrite())return;
+  const d={name:$('#cl-name').value.trim(),address:$('#cl-addr').value.trim(),contact:$('#cl-contact').value.trim(),phone:$('#cl-phone').value.trim(),email:$('#cl-email').value.trim()}; if(!d.name)return;
+  const old=S.editClient?clientById(S.editClient):null;
+  try{ if(S.editClient) await S.db.doc('clients/'+S.editClient).update(d); else await S.db.collection('clients').doc().set({...d,createdAt:Date.now()}); if(old){ const dd=diff(old,d,CL_LABELS); if(dd) logAct('Client edited',d.name,dd) } else logAct('Client added',d.name,''); toast(S.editClient?'Client saved':'Client added'); S.editClient=null; renderClients() }catch(err){writeErr(err)} });
+
+/* ---------- SETTINGS ---------- */
+function renderSettings(){
+  const st=S.settings;
+  const bk=S.isOwner?`<div class="panel" style="margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between"><div style="flex:1 1 300px;min-width:0"><h2>Weekly backup</h2><p class="sub" style="margin:0">Downloads everything (extinguishers, clients, delivery notes, settings and the activity log) as one Excel file. Do it once a week and keep the files in a safe folder. ${S.settings.lastBackup?'<br><b>Last backup:</b> '+fmtDT(S.settings.lastBackup,S.settings.lastBackupTime)+' ('+(backupAge()===0?'today':backupAge()+' days ago')+').':'<br><b>No backup made yet.</b>'}</p></div><button class="btn pri" id="bk-btn">${backingUp?'Preparing…':'Download backup (Excel)'}</button></div>`:'';
+  $('#v-settings').innerHTML=bk+`<div class="grid2">
+  <form class="panel" id="stForm"><h2>Your company details</h2><p class="sub">Your own company (the service provider), printed in the header of every PDF. Client details go in the Clients tab.</p>
+    <div class="fields">
+      <label class="f full" for="st-co">Company name<input id="st-co" value="${esc(st.company||'')}"></label>
+      <label class="f full" for="st-addr">Address<input id="st-addr" value="${esc(st.address||'')}"></label>
+      <label class="f" for="st-phone">Phone<input id="st-phone" value="${esc(st.phone||'')}"></label>
+      <label class="f" for="st-email">Email<input id="st-email" value="${esc(st.email||'')}"></label>
+      <label class="f" for="st-web">Website<input id="st-web" value="${esc(st.website||'')}"></label>
+      <label class="f" for="st-paper">Paper size<select id="st-paper">${[['letter','Letter'],['a4','A4']].map(([k,l])=>'<option value="'+k+'"'+((st.paper||'letter')===k?' selected':'')+'>'+l+'</option>').join('')}</select></label>
+      <label class="f" for="st-prefix">Workshop no. prefix<input id="st-prefix" maxlength="5" value="${esc(st.prefix||'WS')}"></label>
+      <label class="f full" for="st-logo">Logo <span class="hint">(PNG or JPG)</span><input type="file" id="st-logo" accept="image/png,image/jpeg"></label>
+      ${st.logo?'<div class="full" style="display:flex;gap:10px;align-items:center"><img class="logo-prev" src="'+esc(st.logo)+'" alt="Current logo"><button type="button" class="btn sm" id="st-nologo">Remove logo</button></div>':''}
+    </div>
+    <div class="actions"><button class="btn pri" type="submit">Save your company details</button></div>
+  </form>
+  <div class="panel">${usersPanelHTML()}
+    <h3 class="sec" style="margin-top:24px;border-top:1px solid var(--line);padding-top:14px">NFPA 10 intervals used</h3>
+    <div class="tablewrap"><table class="t"><thead><tr><th>Type</th><th>Hydro</th><th>6-year</th></tr></thead><tbody>${Object.values(TYPES).map(t=>'<tr><td>'+esc(t.label)+'</td><td class="nw">'+t.hydro+' yrs</td><td>'+(t.six?'Yes':'—')+'</td></tr>').join('')}</tbody></table></div>
+    <p class="small muted">Annual maintenance every 12 months for all types. Non-rechargeable units: removed 12 years from manufacture.</p>
+  </div></div>`;
+  if(!S.isOwner){ const f=$('#stForm'); f.querySelectorAll('input,select,button').forEach(x=>x.disabled=true); const nl=$('#st-nologo'); if(nl) nl.hidden=true;
+    f.querySelector('.actions').innerHTML='<span class="small muted">Only the administrator can change company details, logo and prefix.</span>' }
+}
+async function saveSettings(patch){ if(!S.isOwner){ toast('Only the administrator can change company details.'); return false } if(!guardWrite())return false; try{ const ref=S.db.doc('meta/settings'); const snap=await ref.get(); if(snap.exists) await ref.update(patch); else await ref.set(patch); return true }catch(e){writeErr(e);return false} }
+async function saveTeam(patch){ if(!guardWrite())return false; try{ const ref=S.db.doc('meta/team'); const snap=await ref.get(); if(snap.exists) await ref.update(patch); else await ref.set(patch); return true }catch(e){writeErr(e);return false} }
+$('#v-settings').addEventListener('submit',async e=>{ e.preventDefault();
+  const p={company:$('#st-co').value.trim(),address:$('#st-addr').value.trim(),phone:$('#st-phone').value.trim(),email:$('#st-email').value.trim(),website:$('#st-web').value.trim(),paper:$('#st-paper').value,prefix:($('#st-prefix').value.trim()||'WS').toUpperCase()};
+  const dd=diff(S.settings,p,ST_LABELS); if(await saveSettings(p)){ if(dd) logAct('Company details changed','Settings',dd); toast('Company details saved') } });
+$('#v-settings').addEventListener('click',async e=>{
+  if(e.target.id==='bk-btn'){ doBackup(); return }
+  if(e.target.id==='st-addtech'){ const n=$('#st-tech').value.trim(); const role=$('#st-role').value; if(!n)return; if(people().includes(n)){toast(n+' is already listed');return}
+    const patch=role==='office'?{office:office().concat(n)}:{techs:techs().concat(n)};
+    if(await saveTeam(patch)){ logAct(role==='office'?'Office staff added':'Technician added',n,''); toast('Added '+n+(role==='office'?' (Office)':' (Technician)')) } }
+  if(e.target.dataset.rmtech){ if(!S.isOwner) return; const n=e.target.dataset.rmtech; const off=e.target.dataset.role==='office';
+    if(await saveTeam(off?{office:office().filter(x=>x!==n)}:{techs:techs().filter(x=>x!==n)})){ logAct(off?'Office staff removed':'Technician removed',n,''); toast('Removed '+n) } }
+  if(e.target.id==='st-nologo'){ if(await saveSettings({logo:'',logoW:0,logoH:0})){ logAct('Logo removed','Settings',''); toast('Logo removed') } }
+});
+$('#v-settings').addEventListener('change',e=>{
+  if(e.target.id!=='st-logo'||!e.target.files[0]||!S.isOwner) return; const f=e.target.files[0]; const rd=new FileReader();
+  rd.onload=()=>{ const img=new Image(); img.onload=async()=>{ const max=500; const k=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height); const url=c.toDataURL('image/jpeg',0.88);
+      if(url.length>200000){toast('That image is too large. Use a smaller logo file.');return}
+      if(await saveSettings({logo:url,logoW:c.width,logoH:c.height})){ logAct('Logo changed','Settings',''); toast('Logo saved') } }; img.src=rd.result };
+  rd.readAsDataURL(f);
+});
+
+/* ---------- ACTIVITY LOG (administrator) ---------- */
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const LG={from:daysAgo(7),to:'',q:'',rows:[],names:{},loading:false,loaded:false};
+const SENSITIVE=/deleted|cancelled|removed|edited|changed|Back to/;
+async function loadLog(){
+  if(!S.sb||!S.isOwner) return; LG.loading=true; renderActivity();
+  try{
+    const from=LG.from||'2000-01-01', to=LG.to||today();
+    const start=new Date(from+'T00:00:00'), end=new Date(to+'T00:00:00'); end.setDate(end.getDate()+1);
+    const p2=n=>String(n).padStart(2,'0');
+    let all=[]; for(let off=0;;off+=1000){
+      const {data,error}=await S.sb.from('activity').select('*').gte('at',start.toISOString()).lt('at',end.toISOString()).order('at',{ascending:false}).range(off,off+999);
+      if(error) throw error; all=all.concat(data); if(data.length<1000) break }
+    LG.names={};
+    LG.rows=all.map(r=>{ const d=new Date(r.at); LG.names[r.user_email]={name:r.user_name||r.user_email};
+      return {t:d.getTime(),date:d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()),time:p2(d.getHours())+':'+p2(d.getMinutes()),a:r.action,ref:r.ref||'',d:r.details||'',tech:r.user_email,uid:r.user_email} });
+  }catch(e){ console.error(e); toast('Could not load the activity log.') }
+  LG.loading=false; LG.loaded=true; renderActivity();
+}
+function logRows(){ const q=LG.q.trim().toLowerCase(); return LG.rows.filter(r=>!q||[r.a,r.ref,r.d,r.tech,(LG.names[r.uid]||{}).name].join(' ').toLowerCase().includes(q)) }
+function renderActivity(){
+  const el=$('#v-activity');
+  if(!S.isOwner){ el.innerHTML='<div class="panel"><div class="empty"><strong>Administrator only</strong>The activity log is visible only to the administrator.</div></div>'; return }
+  if(!LG.loaded&&!LG.loading&&S.db){ loadLog(); return }
+  const rows=logRows();
+  el.innerHTML=`<div class="panel" style="padding:0;overflow:hidden"><div style="padding:18px 18px 6px"><h2>Activity log</h2><p class="sub">Every change made in the app: who did it, when, and what changed. Only you can see this page. Red rows are deletions, cancellations and edits to existing data.</p>
+    <div class="toolbar"><label class="f" for="lg-from">From<input type="date" id="lg-from" value="${esc(LG.from)}"></label><label class="f" for="lg-to">To<input type="date" id="lg-to" value="${esc(LG.to)}"></label>
+      <input type="search" id="lg-q" placeholder="Search action, workshop no., client, person" value="${esc(LG.q)}" aria-label="Search log" style="align-self:flex-end">
+      <button class="btn sm" id="lg-load" style="align-self:flex-end">${LG.loading?'Loading…':'Refresh'}</button><button class="btn sm" id="lg-csv" style="align-self:flex-end">Export CSV</button></div></div>
+    ${rows.length?`<div style="overflow-x:auto"><table class="t"><thead><tr><th>When</th><th>Account</th><th>Email</th><th>Action</th><th>Record</th><th>Details</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr${SENSITIVE.test(r.a)?' style="color:var(--st-bad)"':''}><td class="nw">${fmtDT(r.date,r.time)}</td><td>${esc((LG.names[r.uid]||{}).name||'Team member')}</td><td>${esc(r.tech)}</td><td class="nw"><b>${esc(r.a)}</b></td><td class="nw">${esc(r.ref)}</td><td style="min-width:240px">${esc(r.d)}</td></tr>`).join('')}
+    </tbody></table></div>`:`<div class="empty"><strong>${LG.loading?'Loading…':'No activity in this period'}</strong>${LG.loading?'':'Actions are recorded from now on. Change the dates to look further back.'}</div>`}</div>`;
+}
+$('#v-activity').addEventListener('change',e=>{ if(e.target.id==='lg-from'){LG.from=e.target.value;loadLog()} if(e.target.id==='lg-to'){LG.to=e.target.value;loadLog()} });
+$('#v-activity').addEventListener('input',e=>{ if(e.target.id==='lg-q'){ LG.q=e.target.value; const pos=e.target.selectionStart; renderActivity(); const q=$('#lg-q'); q.focus(); q.setSelectionRange(pos,pos) } });
+$('#v-activity').addEventListener('click',async e=>{
+  if(e.target.id==='lg-load') loadLog();
+  if(e.target.id==='lg-csv'){ const rows=[['Date','Time','Account','Email','Action','Record','Details']].concat(logRows().map(r=>[r.date,r.time,(LG.names[r.uid]||{}).name||'',r.tech,r.a,r.ref,r.d]));
+    const csv=rows.map(r=>r.map(v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')).join('\r\n'); await saveFile('activity-log-'+today()+'.csv',csv) }
+});
+
+/* ---------- boot ---------- */
+function rerenderSoft(){ // keep forms the person is typing in
+  renderChrome(); renderBanner();
+  if(S.view==='intake'){ const f=$('#intakeForm'); const busy=f&&f.contains(document.activeElement);
+    if(!f||(S.fullIntake&&!busy)){ if(f) intakeDraft=readIntake(); renderIntake() }
+    else { const sel=$('#in-client'); if(sel&&document.activeElement!==sel) sel.innerHTML=clientOptions(S.intakeClient,'Select client…'); $('#in-batch').innerHTML=intakeBatchHTML(); checkSeen(); if(S.fullIntake&&$('#in-newclient-box')) $('#in-newclient-box').hidden=true } }
+  else if(S.view==='workshop'){ if(document.activeElement&&document.activeElement.id==='ws-q') return; renderWorkshop() }
+  else if(S.view==='delivery'){ if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#v-delivery')&&/^(dn-(ref|by|recv|rem)|cn-reason)$/.test(document.activeElement.id)) return; renderDelivery() }
+  else if(S.view==='clients'){ if(document.activeElement&&document.activeElement.closest('#clForm')) return; renderClients() }
+  else if(S.view==='activity'){ /* loaded on demand */ }
+  else if(S.view==='settings'){ if(document.activeElement&&document.activeElement.closest('#stForm')) return; renderSettings() }
+}
+let rt=null; function schedule(){ clearTimeout(rt); rt=setTimeout(rerenderSoft,60) }
+/* ---------- Supabase connection ---------- */
+const SB_URL='https://nqkfpwxprccsdsnzeier.supabase.co';
+const SB_KEY='sb_publishable_cS5hjNOZ17bWKfDI70aPkw_VYTblJXx';
+function dbErr(e){
+  const m=(e&&e.message)||'error';
+  const x=new Error(/row-level security|not allowed|no access|permission/i.test(m)||(e&&e.code==='42501')?'You do not have permission for this action.':m);
+  x.code=e&&e.code; return x;
+}
+/* Small document store on top of the "docs" table, with live updates */
+function makeDB(sb){
+  const listeners=new Set();
+  const parentOf=p=>p.slice(0,p.lastIndexOf('/'));
+  const idOf=p=>p.slice(p.lastIndexOf('/')+1);
+  const clean=o=>JSON.parse(JSON.stringify(o));
+  const newId=()=>{ const c='abcdefghijklmnopqrstuvwxyz0123456789'; let s=''; for(const b of crypto.getRandomValues(new Uint8Array(20))) s+=c[b%36]; return s };
+  const colSnap=rows=>({docs:rows.map(r=>({id:idOf(r.path),data:()=>r.data}))});
+  async function fetchCol(p){ let all=[]; for(let off=0;;off+=1000){ const {data,error}=await sb.from('docs').select('path,data').eq('parent',p).range(off,off+999); if(error) throw dbErr(error); all=all.concat(data); if(data.length<1000) break } return all }
+  async function fetchDoc(p){ const {data,error}=await sb.from('docs').select('path,data').eq('path',p).maybeSingle(); if(error) throw dbErr(error); return data }
+  function refresh(l){ clearTimeout(l.t); l.t=setTimeout(async()=>{ try{ if(l.kind==='col') l.cb(colSnap(await fetchCol(l.key))); else { const r=await fetchDoc(l.key); l.cb({exists:!!r,id:idOf(l.key),data:()=>r?r.data:undefined}) } }catch(e){ l.err&&l.err(e) } },50) }
+  function poke(path){ listeners.forEach(l=>{ if((l.kind==='doc'&&l.key===path)||(l.kind==='col'&&l.key===parentOf(path))) refresh(l) }) }
+  const refreshAll=()=>listeners.forEach(refresh);
+  function docRef(path){ return {
+    id:idOf(path), path,
+    async get(){ const r=await fetchDoc(path); return {exists:!!r,id:idOf(path),data:()=>r?r.data:undefined} },
+    async set(d){ const {error}=await sb.from('docs').upsert({path,parent:parentOf(path),data:clean(d)},{onConflict:'path'}); if(error) throw dbErr(error); poke(path) },
+    async update(p){ const {error}=await sb.rpc('doc_update',{p_path:path,p_patch:clean(p)}); if(error) throw dbErr(error); poke(path) },
+    async delete(){ const {error}=await sb.from('docs').delete().eq('path',path); if(error) throw dbErr(error); poke(path) },
+    onSnapshot(cb,err){ const l={kind:'doc',key:path,cb,err}; listeners.add(l); refresh(l); return ()=>listeners.delete(l) }
+  }}
+  function colRef(p){ return { path:p, doc:id=>docRef(p+'/'+(id||newId())),
+    async get(){ return colSnap(await fetchCol(p)) },
+    onSnapshot(cb,err){ const l={kind:'col',key:p,cb,err}; listeners.add(l); refresh(l); return ()=>listeners.delete(l) } } }
+  sb.channel('docs-live').on('postgres_changes',{event:'*',schema:'public',table:'docs'},pl=>{ const p=(pl.new&&pl.new.path)||(pl.old&&pl.old.path); if(p) poke(p); else refreshAll() })
+    .subscribe(st=>{ if(st==='SUBSCRIBED') refreshAll() });
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refreshAll() });
+  window.addEventListener('online',refreshAll);
+  setInterval(()=>{ if(!document.hidden) refreshAll() },120000);
+  return { collection:colRef, doc:docRef, refreshAll };
+}
+
+/* ---------- sign-in & start ---------- */
+let DEFAULT_LOGO=null;
+async function loadDefaultLogo(){
+  try{ const b=await (await fetch('ganb-logo.jpg')).blob(); const url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)});
+    const img=new Image(); await new Promise(r=>{img.onload=r;img.onerror=r;img.src=url}); DEFAULT_LOGO={logo:url,logoW:img.naturalWidth||500,logoH:img.naturalHeight||420} }catch(e){ DEFAULT_LOGO=null }
+}
+function showAuth(msg){ $('#auth').hidden=false; $('#au-msg').textContent=msg||''; setTimeout(()=>{const e=$('#au-email'); e&&e.focus()},50) }
+async function loadProfiles(){
+  const {data,error}=await S.sb.from('profiles').select('*').order('full_name');
+  if(error){ console.warn(error); return }
+  S.profiles=data; const mine=data.find(p=>p.email===S.me.email);
+  if(mine){ S.me=mine; S.role=mine.role; S.isOwner=mine.role==='admin' }
+  if(!mine||!mine.active){ toast('Your access was removed.'); setTimeout(async()=>{ await S.sb.auth.signOut(); location.reload() },1500); return }
+  schedule(); if(S.view==='settings'&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#v-settings'))) renderSettings();
+}
+let started=false;
+async function start(){
+  const {data:{user}}=await S.sb.auth.getUser();
+  if(!user){ showAuth(); return }
+  const email=(user.email||'').toLowerCase();
+  const {data:prof,error}=await S.sb.from('profiles').select('*').eq('email',email).maybeSingle();
+  if(error||!prof||!prof.active){ await S.sb.auth.signOut(); showAuth('The account '+email+' has no access to the workshop app. Ask the administrator.'); return }
+  $('#auth').hidden=true; if(started) return; started=true;
+  S.me=prof; S.role=prof.role; S.isOwner=prof.role==='admin'; S.myId=user.id; S.canWrite=true;
+  S.db=makeDB(S.sb); S.downloads={}; S.sample=null; S.imgLimits=null;
+  await loadDefaultLogo();
+  renderPhotoBox(); renderBanner(); schedule();
+  const db=S.db;
+  const err=e=>{console.error(e); toast('Lost connection to the database. Reload the page.')};
+  db.collection('units').onSnapshot(s=>{ S.units=s.docs.map(d=>({...d.data(),id:d.id})); schedule(); if(D){ const u=unitById(D.id); if(!u) closeDrawer() } },err);
+  db.collection('clients').onSnapshot(s=>{ S.clients=s.docs.map(d=>({...d.data(),id:d.id})); schedule() },err);
+  db.collection('notes').onSnapshot(s=>{ S.notes=s.docs.map(d=>({...d.data(),id:d.id})); schedule() },err);
+  db.doc('meta/settings').onSnapshot(s=>{ S.settings=s.exists?{...s.data()}:{}; if(!S.settings.logo&&DEFAULT_LOGO) Object.assign(S.settings,DEFAULT_LOGO); S.settingsLoaded=true; schedule() },err);
+  await loadProfiles();
+  S.sb.channel('profiles-live').on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>loadProfiles()).subscribe();
+}
+async function boot(){
+  setView(['intake','workshop','delivery','clients','settings','activity'].includes(lsGet('fe.view'))?lsGet('fe.view'):'intake');
+  if(!window.supabase||!window.supabase.createClient){ S.db=null; renderBanner(); $('#auth').hidden=false; $('#au-msg').textContent='Could not reach the database service. Check the internet connection and reload.'; return }
+  S.sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  const {data:{session}}=await S.sb.auth.getSession();
+  if(!session){ showAuth(); return }
+  await start();
+}
+$('#authForm').addEventListener('submit',async e=>{ e.preventDefault();
+  const btn=$('#au-btn'); btn.disabled=true; btn.textContent='Signing in…'; $('#au-msg').textContent='';
+  const {error}=await S.sb.auth.signInWithPassword({email:$('#au-email').value.trim().toLowerCase(),password:$('#au-pass').value});
+  btn.disabled=false; btn.textContent='Sign in';
+  if(error){ $('#au-msg').textContent=/invalid/i.test(error.message)?'Wrong email or password.':error.message; return }
+  $('#au-pass').value=''; await start();
+});
+
+
+/* ---------- roles, users and restore (hosted version) ---------- */
+const _renderChrome=renderChrome;
+renderChrome=function(){
+  _renderChrome();
+  const tech=S.role==='tech';
+  const dt=document.querySelector('#tabs [data-v="delivery"]'); if(dt) dt.hidden=tech;
+  if(tech&&S.view==='delivery'){ setView('workshop'); return }
+  const ub=$('#userBox');
+  if(ub&&S.me){ const k=S.me.full_name+'|'+S.role; if(ub.dataset.k!==k){ ub.dataset.k=k;
+    ub.innerHTML='<span><b>'+esc(S.me.full_name)+'</b> <span class="rl">'+esc(ROLE_LABEL[S.role]||'')+'</span></span><button type="button" class="btn sm" id="signOut">Sign out</button>' } }
+};
+const _renderClients=renderClients;
+renderClients=function(){
+  _renderClients();
+  if(S.role==='tech'){ const f=$('#clForm'); if(f) f.hidden=true; document.querySelectorAll('#v-clients [data-edit]').forEach(b=>b.hidden=true) }
+};
+const _drawDrawer=drawDrawer;
+drawDrawer=function(){
+  _drawDrawer();
+  if(S.role!=='tech'||!D) return; const u=unitById(D.id); if(!u||u.status!=='delivered') return;
+  const r=$('#drawerRoot'); if(!r) return;
+  r.querySelectorAll('input,select,textarea').forEach(x=>x.disabled=true);
+  r.querySelectorAll('button').forEach(b=>{ if(/save|back to|start|ready|delete|condemn/i.test(b.textContent)) b.disabled=true });
+  const first=r.querySelector('input,select,textarea,form'); if(first&&!r.querySelector('.techlock')){ const n=document.createElement('div'); n.className='banner warn techlock'; n.textContent='This extinguisher was already delivered. Only the office or the administrator can change it.'; first.closest('form,div').prepend(n) }
+};
+document.addEventListener('click',async e=>{ if(e.target.id==='signOut'){ try{ await S.sb.auth.signOut() }catch(x){} location.reload() } });
+
+function usersPanelHTML(){
+  const me=S.me||{};
+  let h='<h2>Your account</h2><p class="sub">Signed in as <b>'+esc(me.full_name||'')+'</b> ('+esc(me.email||'')+') · '+esc(ROLE_LABEL[S.role]||'')+'</p>'+
+    '<div class="inline"><input id="pw-new" type="password" placeholder="New password (8+ characters)" autocomplete="new-password"><button type="button" class="btn" id="pw-save">Change password</button></div>';
+  const list=[...(S.profiles||[])].sort((a,b)=>(a.full_name||'').localeCompare(b.full_name||''));
+  h+='<h3 class="sec" style="margin-top:20px">Users</h3>';
+  if(S.isOwner){
+    h+='<p class="sub">Adding a person here gives their email access. Then create their login in Supabase: <b>Authentication → Users → Add user</b>, same email, a starting password, and "Auto Confirm User" on. Unticking Active blocks them at once.</p>';
+    h+='<div class="tablewrap"><table class="t"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th></tr></thead><tbody>'+list.map(p=>{ const self=p.email===me.email;
+      return '<tr><td>'+esc(p.full_name)+'</td><td class="small">'+esc(p.email)+'</td><td><select data-urole="'+esc(p.email)+'"'+(self?' disabled':'')+' aria-label="Role of '+esc(p.full_name)+'">'+Object.entries(ROLE_LABEL).map(([k,l])=>'<option value="'+k+'"'+(p.role===k?' selected':'')+'>'+l+'</option>').join('')+'</select></td><td><input type="checkbox" data-uactive="'+esc(p.email)+'"'+(p.active?' checked':'')+(self?' disabled':'')+' aria-label="'+esc(p.full_name)+' active"></td></tr>' }).join('')+'</tbody></table></div>';
+    h+='<div class="inline" style="margin-top:10px;flex-wrap:wrap;gap:8px"><input id="nu-name" placeholder="Full name"><input id="nu-email" type="email" placeholder="Email"><select id="nu-role" style="width:140px"><option value="tech">Technician</option><option value="office">Office</option><option value="admin">Administrator</option></select><button type="button" class="btn" id="nu-add">Add user</button></div>';
+    h+='<h3 class="sec" style="margin-top:20px">Restore from backup</h3><p class="sub">Loads the "Restore data" sheet of a backup Excel file, from this app or from the old Claude version. Records with the same id are replaced; nothing is deleted.</p><label class="btn" for="rs-file">Choose backup file…</label><input type="file" id="rs-file" accept=".xlsx" hidden><div id="rs-status" class="small muted" style="margin-top:6px"></div>';
+  } else {
+    h+='<div class="techlist" style="margin-top:0">'+list.filter(p=>p.active).map(p=>'<span>'+esc(p.full_name)+' <span class="muted small">'+esc(ROLE_LABEL[p.role]||'')+'</span></span>').join('')+'</div>'+
+      '<p class="small muted">Only the administrator can add people, change roles, change company details and see the activity log.</p>';
+  }
+  return h;
+}
+$('#v-settings').addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.id==='pw-save'){ const v=$('#pw-new').value; if(v.length<8){ toast('Use at least 8 characters.'); return }
+    const {error}=await S.sb.auth.updateUser({password:v}); if(error){ toast('Could not change password: '+error.message); return } $('#pw-new').value=''; logAct('Password changed',S.me.full_name,''); toast('Password changed') }
+  if(t.id==='nu-add'){ if(!S.isOwner) return; const name=$('#nu-name').value.trim(), email=$('#nu-email').value.trim().toLowerCase(), role=$('#nu-role').value;
+    if(!name||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Enter a name and a valid email.'); return }
+    if((S.profiles||[]).some(p=>p.email===email)){ toast(email+' is already listed'); return }
+    const {error}=await S.sb.from('profiles').insert({email,full_name:name,role,active:true}); if(error){ toast('Could not add: '+dbErr(error).message); return }
+    logAct('User added',name,ROLE_LABEL[role]+' · '+email); toast('Added '+name+'. Now create the login in Supabase.'); await loadProfiles(); renderSettings() }
+});
+$('#v-settings').addEventListener('change',async e=>{
+  const t=e.target;
+  if(t.dataset.urole||t.dataset.uactive){ if(!S.isOwner) return;
+    const email=t.dataset.urole||t.dataset.uactive; const p=(S.profiles||[]).find(x=>x.email===email); if(!p) return;
+    const patch=t.dataset.urole?{role:t.value}:{active:t.checked};
+    const {error}=await S.sb.from('profiles').update(patch).eq('email',email); if(error){ toast('Could not save: '+dbErr(error).message); renderSettings(); return }
+    logAct(t.dataset.urole?'User role changed':(t.checked?'User activated':'User deactivated'),p.full_name,t.dataset.urole?(ROLE_LABEL[p.role]+' → '+ROLE_LABEL[t.value]):email);
+    toast('Saved'); await loadProfiles(); }
+  if(t.id==='rs-file'&&t.files[0]){ await restoreBackup(t.files[0]); t.value='' }
+});
+async function restoreBackup(file){
+  if(!S.isOwner) return; const st=$('#rs-status'); const say=m=>{ if(st) st.textContent=m };
+  try{
+    say('Reading '+file.name+'…'); const X=await getXLSX(); const wb=X.read(await file.arrayBuffer(),{type:'array'});
+    const ws=wb.Sheets['Restore data']; if(!ws){ say('This file has no "Restore data" sheet.'); return }
+    const rows=X.utils.sheet_to_json(ws,{header:1,defval:''}).slice(1).filter(r=>r&&r[0]&&r[1]);
+    const cur=await S.db.doc('meta/settings').get(); const curSet=cur.exists?cur.data():{};
+    const docs=[]; const maxN={};
+    const bump=(k,n)=>{ if(n>(maxN[k]||0)) maxN[k]=n };
+    for(const r of rows){ const col=String(r[0]), id=String(r[1]); if(!['units','clients','notes','meta'].includes(col)) continue; if(col==='meta'&&id!=='settings') continue;
+      let d=JSON.parse(r.slice(2).map(String).join(''));
+      if(col==='meta'){ d={...curSet,...d}; delete d.techs; if(curSet.logo){ d.logo=curSet.logo; d.logoW=curSet.logoW; d.logoH=curSet.logoH } }
+      if(col==='units'&&d.tag){ const m=String(d.tag).match(/-(\d{2})-(\d{4})$/); if(m) bump('tag20'+m[1],+m[2]) }
+      if(col==='notes'&&d.no){ const m=String(d.no).match(/^DN-(\d{4})-(\d{4})/); if(m) bump('dn'+m[1],+m[2]) }
+      docs.push({path:col+'/'+id,parent:col,data:d}) }
+    if(!docs.length){ say('Nothing to restore in this file.'); return }
+    say('Saving '+docs.length+' records…');
+    for(let i=0;i<docs.length;i+=200){ const {error}=await S.sb.from('docs').upsert(docs.slice(i,i+200),{onConflict:'path'}); if(error) throw dbErr(error) }
+    for(const [k,n] of Object.entries(maxN)){ const {error}=await S.sb.rpc('set_counter_min',{p_key:k,p_val:n}); if(error) throw dbErr(error) }
+    const c=s=>docs.filter(d=>d.parent===s).length;
+    logAct('Backup restored',file.name,c('units')+' extinguishers, '+c('clients')+' clients, '+c('notes')+' notes');
+    say('Restored '+c('units')+' extinguishers, '+c('clients')+' clients and '+c('notes')+' delivery notes.'); toast('Backup restored'); S.db.refreshAll();
+  }catch(err){ console.error(err); say('Restore failed: '+((err&&err.message)||'error')) }
+}
+boot();
+
+</script>
+
+</body></html>
