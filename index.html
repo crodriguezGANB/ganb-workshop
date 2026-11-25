@@ -163,6 +163,9 @@ input.unsure,select.unsure{background:var(--warn-bg)}
 #sc-cam{width:100%;min-height:200px;background:#000;border-radius:8px;overflow:hidden}
 #sc-cam video{width:100%!important;height:auto!important;display:block}
 .scanact{display:flex;gap:8px;flex-wrap:wrap}
+.sclist{display:flex;flex-direction:column;gap:8px}
+.scrow{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.scrow select{width:auto;max-width:48%}
 </style>
 
 <div id="auth" class="authwrap" hidden>
@@ -1241,79 +1244,158 @@ async function restoreBackup(file){
 }
 /* ---------- barcode / QR scanner (intake) ---------- */
 const SCAN_LIBS=['https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js','https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js'];
-let scanLib=null, scanner=null;
+let scanLib=null, scanner=null, SC={codes:[]};
 async function getScanLib(){
   if(scanLib) return scanLib;
   for(const u of SCAN_LIBS){ try{ await loadScript(u); if(window.Html5Qrcode){ scanLib=window.Html5Qrcode; return scanLib } }catch(e){} }
   throw new Error('The scanner could not load. Check the internet connection and try again.');
 }
+function libConfig(){
+  const F=window.Html5QrcodeSupportedFormats; const c={verbose:false,experimentalFeatures:{useBarCodeDetectorIfSupported:true}};
+  if(F) c.formatsToSupport=['QR_CODE','CODE_128','CODE_39','CODE_93','EAN_13','EAN_8','UPC_A','UPC_E','ITF','CODABAR','DATA_MATRIX','PDF_417'].map(k=>F[k]).filter(v=>v!==undefined);
+  return c;
+}
 renderPhotoBox=function(){
   const b=$('#in-photo'); if(!b) return; b.hidden=false;
-  b.innerHTML=`<div class="photo"><div><b>Scan barcode or QR code</b><div class="small muted">Point the camera at the code on the label. Barcodes usually hold the serial number, QR codes the model. You choose where the result goes.</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn pri" id="sc-open">Scan with camera</button><label class="btn" for="sc-file">From photo</label><input type="file" id="sc-file" accept="image/*" capture="environment" hidden></div></div>`;
+  b.innerHTML=`<div class="photo"><div><b>Scan barcodes or QR code</b><div class="small muted">Reads the serial and model barcodes (or the QR code) from the label and fills the fields. With the camera, show one code at a time; a photo can hold the whole label.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn pri" id="sc-open">Scan with camera</button><label class="btn" for="sc-file">From photo</label><input type="file" id="sc-file" accept="image/*" hidden></div></div>`;
 };
-function closeScanner(){ const r=$('#scanRoot'); if(scanner){ const s=scanner; scanner=null; try{ s.stop().then(()=>{try{s.clear()}catch(e){}}).catch(()=>{}) }catch(e){} } if(r) r.remove() }
-function scanShell(){
-  closeScanner(); const r=document.createElement('div'); r.id='scanRoot'; r.className='scanwrap';
-  r.innerHTML='<div class="scanbox" role="dialog" aria-label="Scan code"><div class="scanhead"><b>Scan code</b><button type="button" class="btn sm" id="sc-close">Close</button></div><div id="sc-cam"></div><div id="sc-out" class="small muted">Starting camera…</div></div>';
+function stopCam(){ if(scanner){ const s=scanner; scanner=null; try{ s.stop().then(()=>{try{s.clear()}catch(e){}}).catch(()=>{}) }catch(e){} } }
+function closeScanner(){ stopCam(); const r=$('#scanRoot'); if(r) r.remove() }
+function scanShell(title){
+  closeScanner(); SC={codes:[]}; const r=document.createElement('div'); r.id='scanRoot'; r.className='scanwrap';
+  r.innerHTML='<div class="scanbox" role="dialog" aria-label="'+esc(title)+'"><div class="scanhead"><b>'+esc(title)+'</b><button type="button" class="btn sm" id="sc-close">Close</button></div><div id="sc-cam"></div><div id="sc-msg" class="small muted"></div><div id="sc-out"></div></div>';
   document.body.appendChild(r); return r;
 }
-function parseCode(text,isQR){
-  const t=String(text||'').trim(); const out={};
+const scMsg=m=>{ const e=$('#sc-msg'); if(e) e.innerHTML=m };
+const isQRfmt=f=>/QR|DATA_MATRIX|PDF/i.test(f||'');
+function parseLabelled(text){
+  const t=String(text||''); const out={};
   const grab=re=>{ const m=t.match(re); return m?m[1].trim().replace(/[;,|]+$/,''):'' };
-  out.model=grab(/(?:model|mod\.?|p\/n|part\s*(?:no|number))\s*[:=#]?\s*([^\n\r;|,]+)/i);
+  out.model=grab(/(?:model|modelo|mod\.?|p\/n|part\s*(?:no|number))\s*[:=#]?\s*([^\n\r;|,]+)/i);
   out.serial=grab(/(?:serial|s\/n|sn)\s*(?:no\.?|number|#)?\s*[:=#]\s*([^\n\r;|,]+)/i);
   out.brand=grab(/(?:brand|mfr|manufacturer|make)\s*[:=]\s*([^\n\r;|,]+)/i);
   let m=t.match(/(?:mfg|manufactured|mfd|date)[^0-9]{0,12}(\d{4})[-\/.](\d{1,2})\b/i), y, mo;
   if(m){ y=m[1]; mo=m[2] } else { m=t.match(/(?:mfg|manufactured|mfd|date)[^0-9]{0,12}(\d{1,2})[-\/.](\d{4})\b/i); if(m){ mo=m[1]; y=m[2] } }
   if(y&&+mo>=1&&+mo<=12) out.mfg=y+'-'+String(mo).padStart(2,'0');
-  const labelled=Object.values(out).some(Boolean);
-  return {raw:t,isQR,labelled,fields:out};
+  Object.keys(out).forEach(k=>{ if(!out[k]) delete out[k] });
+  return out;
+}
+const digitShare=s=>{ const x=String(s).replace(/[^A-Za-z0-9]/g,''); return x?x.replace(/\D/g,'').length/x.length:0 };
+// Decide which field each code goes to: labelled QR text is split; otherwise the most numeric barcode is the serial, the other the model
+function guessRoles(codes){
+  const used=new Set();
+  codes.forEach(c=>{ c.parsed=isQRfmt(c.fmt)||/[:=]/.test(c.text)?parseLabelled(c.text):{}; c.role=Object.keys(c.parsed).length?'parsed':'' });
+  const plain=codes.filter(c=>!c.role&&!/^https?:\/\//i.test(c.text));
+  const byNum=[...plain].sort((a,b)=>digitShare(b.text)-digitShare(a.text));
+  if(byNum.length===1) byNum[0].role=isQRfmt(byNum[0].fmt)?'model':(digitShare(byNum[0].text)>=0.6?'serial':'model');
+  else if(byNum.length>=2){ byNum[0].role='serial'; byNum[1].role='model'; byNum.slice(2).forEach(c=>c.role='skip') }
+  codes.forEach(c=>{ if(!c.role) c.role='skip' });
+  return codes;
+}
+function addCode(text,fmt){
+  text=String(text||'').trim(); if(!text||SC.codes.some(c=>c.text===text)) return false;
+  SC.codes.push({text,fmt:fmt||''}); guessRoles(SC.codes); if(navigator.vibrate) navigator.vibrate(50); drawCodes(); return true;
+}
+function drawCodes(){
+  const o=$('#sc-out'); if(!o) return;
+  if(!SC.codes.length){ o.innerHTML=''; return }
+  const opts=[['serial','Serial number'],['model','Model'],['brand','Brand'],['skip','Ignore']];
+  o.innerHTML='<div class="sclist">'+SC.codes.map((c,i)=>{ const pk=Object.keys(c.parsed||{});
+    return '<div class="scrow"><div style="min-width:0;flex:1"><div class="mono" style="word-break:break-all">'+esc(c.text)+'</div><div class="small muted">'+esc(isQRfmt(c.fmt)?'QR code':(c.fmt||'Barcode').replace(/_/g,' '))+(pk.length?' · found '+pk.map(k=>({brand:'brand',model:'model',serial:'serial',mfg:'mfg date'})[k]).join(', '):'')+(/^https?:\/\//i.test(c.text)?' · <a href="'+esc(c.text)+'" target="_blank" rel="noopener">open link</a>':'')+'</div></div>'+
+      '<select data-scrole="'+i+'" aria-label="Field for this code">'+(pk.length?'<option value="parsed"'+(c.role==='parsed'?' selected':'')+'>Fill found fields</option>':'')+opts.map(([k,l])=>'<option value="'+k+'"'+(c.role===k?' selected':'')+'>'+l+'</option>').join('')+'</select></div>' }).join('')+'</div>'+
+    '<div class="scanact" style="margin-top:10px"><button type="button" class="btn pri" id="sc-apply">Fill the fields</button>'+(scanner?'':'<button type="button" class="btn sm" id="sc-again">Scan with camera</button>')+'</div>';
 }
 function fillField(id,val){ const el=$('#'+id); if(!el||!val) return; el.value=val; el.classList.add('filled'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})) }
-function showResult(text,fmt){
-  const isQR=/QR/i.test(fmt||'')||/[\s:=\/]/.test(text)&&!/^[A-Z0-9\-]+$/i.test(text);
-  const p=parseCode(text,isQR); const o=$('#sc-out'); if(!o) return;
-  const cam=$('#sc-cam'); if(cam) cam.style.display='none';
-  const def=isQR?'model':'serial';
-  let h='<div style="margin:6px 0 10px"><span class="pill">'+esc(isQR?'QR code':(fmt||'Barcode'))+'</span></div><div class="mono" style="word-break:break-all;background:var(--sunk);padding:8px;border-radius:6px;color:var(--ink)">'+esc(p.raw)+'</div>';
-  if(p.labelled){ const f=p.fields; h+='<p class="small" style="color:var(--ink)">Found: '+[['brand','Brand'],['model','Model'],['serial','Serial'],['mfg','Mfg date']].filter(([k])=>f[k]).map(([k,l])=>l+' <b>'+esc(f[k])+'</b>').join(' · ')+'</p><div class="scanact"><button type="button" class="btn pri" data-scfill="parsed">Fill these fields</button></div><p class="small muted" style="margin:10px 0 4px">Or put the whole text in one field:</p>' }
-  else h+='<p class="small muted" style="margin:10px 0 4px">Put this in:</p>';
-  h+='<div class="scanact">'+[['serial','Serial number'],['model','Model'],['brand','Brand']].map(([k,l])=>'<button type="button" class="btn'+(!p.labelled&&k===def?' pri':'')+'" data-scfill="'+k+'">'+l+'</button>').join('')+'</div>';
-  if(/^https?:\/\//i.test(p.raw)) h+='<p class="small" style="margin-top:8px">This code is a web link: <a href="'+esc(p.raw)+'" target="_blank" rel="noopener">open it</a> to see the product details.</p>';
-  h+='<div class="scanact" style="margin-top:12px"><button type="button" class="btn sm" id="sc-again">Scan another</button></div>';
-  o.className='small'; o.innerHTML=h; o.dataset.raw=p.raw; o._parsed=p;
+function applyCodes(){
+  let n=0;
+  SC.codes.forEach(c=>{ if(c.role==='parsed'){ const f=c.parsed||{}; ['brand','model','serial','mfg'].forEach(k=>{ if(f[k]){ fillField('in-'+k,f[k]); n++ } }) }
+    else if(['serial','model','brand'].includes(c.role)){ fillField('in-'+c.role,c.text); n++ } });
+  if(typeof updateIntakeAlerts==='function') try{updateIntakeAlerts()}catch(x){}
+  closeScanner(); toast(n?'Filled from the label. Check it against the unit.':'Nothing was filled.');
 }
 async function startCamera(){
-  const r=scanShell(); const o=$('#sc-out');
+  scanShell('Scan with camera'); scMsg('Starting camera…');
   try{ const L=await getScanLib(); if(!$('#scanRoot')) return;
-    const sc=new L('sc-cam',{verbose:false,useBarCodeDetectorIfSupported:true}); scanner=sc;
-    await sc.start({facingMode:'environment'},{fps:10,qrbox:(w,h)=>{const s=Math.min(w,h);return {width:Math.round(Math.min(w*0.85,420)),height:Math.round(s*0.6)}},aspectRatio:1.333},
-      (text,res)=>{ const fmt=res&&res.result&&res.result.format&&res.result.format.formatName; if(scanner){ const s=scanner; scanner=null; s.stop().catch(()=>{}) } if(navigator.vibrate) navigator.vibrate(60); showResult(text,fmt) },()=>{});
-    if(o) o.textContent='Hold the code inside the box. It reads automatically.';
-  }catch(e){ if(o) o.innerHTML=esc(/permission|notallowed/i.test(String(e&&e.name||e))?'Camera access was blocked. Allow the camera for this site in the browser settings, or use "From photo".':((e&&e.message)||String(e)||'The camera could not start.'))+' <br><br>You can also close this and use <b>From photo</b>.' }
+    const sc=new L('sc-cam',libConfig()); scanner=sc;
+    await sc.start({facingMode:'environment'},{fps:12,disableFlip:true,
+        qrbox:(w,h)=>({width:Math.round(w*0.92),height:Math.round(Math.max(90,Math.min(h*0.42,w*0.5)))}),
+        videoConstraints:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080},advanced:[{focusMode:'continuous'}]}},
+      (text,res)=>{ addCode(text,res&&res.result&&res.result.format&&res.result.format.formatName); scMsg('Got '+SC.codes.length+' code'+(SC.codes.length>1?'s':'')+'. Point at the next code, or tap <b>Fill the fields</b>.') },()=>{});
+    if(!SC.codes.length) scMsg('Show <b>one code at a time</b> across the box, 10–20 cm away. Each code read is added below.');
+  }catch(e){ scanner=null; const cam=$('#sc-cam'); if(cam) cam.style.display='none';
+    scMsg(esc(/permission|notallowed/i.test(String(e&&e.name||e))?'Camera access was blocked. Allow the camera for this site in the browser settings.':((e&&e.message)||String(e)||'The camera could not start.'))+' You can also close this and use <b>From photo</b>.') }
 }
+function loadImg(file){ return new Promise((res,rej)=>{ const u=URL.createObjectURL(file); const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=u }) }
+function canvasPart(img,sx,sy,sw,sh,scale,rot){
+  const c=document.createElement('canvas'); const w=Math.round(sw*scale), h=Math.round(sh*scale);
+  if(rot){ c.width=h; c.height=w; const x=c.getContext('2d'); x.translate(h/2,w/2); x.rotate(Math.PI/2); x.drawImage(img,sx,sy,sw,sh,-w/2,-h/2,w,h) }
+  else { c.width=w; c.height=h; c.getContext('2d').drawImage(img,sx,sy,sw,sh,0,0,w,h) }
+  return c;
+}
+const toFile=c=>new Promise(r=>c.toBlob(b=>r(new File([b],'part.jpg',{type:'image/jpeg'})),'image/jpeg',0.92));
 async function scanPhoto(file){
-  scanShell(); const o=$('#sc-out'); const cam=$('#sc-cam'); if(cam) cam.style.display='none';
-  try{ const L=await getScanLib(); if(o) o.textContent='Reading the photo…';
-    const tmp=document.createElement('div'); tmp.id='sc-tmp'; tmp.hidden=true; document.body.appendChild(tmp);
-    const sc=new L('sc-tmp',{verbose:false,useBarCodeDetectorIfSupported:true});
-    try{ const res=await sc.scanFileV2(file,false); showResult(res.decodedText,res.result&&res.result.format&&res.result.format.formatName) }
-    finally{ try{sc.clear()}catch(e){} tmp.remove() }
-  }catch(e){ if(o) o.textContent='No barcode or QR code found in that photo. Take it closer, sharp and straight on, with only one code in view.' }
+  scanShell('Read from photo'); const cam=$('#sc-cam'); if(cam) cam.style.display='none'; scMsg('Reading the photo…');
+  let host=null;
+  try{
+    const img=await loadImg(file); const W=img.naturalWidth, H=img.naturalHeight; const scale=Math.min(1,2600/Math.max(W,H));
+    const found=(t,f)=>addCode(t,f);
+    if('BarcodeDetector' in window){ try{ const det=new BarcodeDetector(); for(const rot of [false,true]){ const r=await det.detect(canvasPart(img,0,0,W,H,scale,rot)); r.forEach(x=>found(x.rawValue,(x.format||'').toUpperCase())); if(SC.codes.length) break } }catch(e){} }
+    if(!SC.codes.length){
+      const L=await getScanLib(); host=document.createElement('div'); host.id='sc-tmp'; host.style.cssText='position:fixed;left:-20000px;top:0;width:5000px;height:20px;overflow:hidden'; document.body.appendChild(host);
+      const sc=new L('sc-tmp',libConfig());
+      const tryC=async c=>{ try{ const r=await sc.scanFileV2(await toFile(c),false); found(r.decodedText,r.result&&r.result.format&&r.result.format.formatName) }catch(e){} };
+      for(const rot of [false,true]){
+        await tryC(canvasPart(img,0,0,W,H,scale,rot));
+        // look band by band so several barcodes on one label are all found
+        const along=rot?W:H, n=10;
+        for(let i=0;i<n-1;i++){ const a=Math.round(along*i/n), len=Math.round(along*2/n); scMsg('Reading the photo… '+Math.round((i+1)/(n-1)*100)+'%');
+          await tryC(rot?canvasPart(img,a,0,len,H,scale,true):canvasPart(img,0,a,W,len,scale,false)) }
+        if(SC.codes.length) break;
+      }
+      try{ sc.clear() }catch(e){}
+    }
+    scMsg(SC.codes.length?'Found '+SC.codes.length+' code'+(SC.codes.length>1?'s':'')+'. Check where each one goes, then tap <b>Fill the fields</b>.':'No barcode or QR code could be read. Take the photo closer and straight on, in good light, with the codes sharp. Or use <b>Scan with camera</b>.');
+    drawCodes();
+  }catch(e){ scMsg('The photo could not be read: '+esc((e&&e.message)||'error')) }
+  finally{ if(host) host.remove() }
 }
 document.addEventListener('click',e=>{ const t=e.target;
-  if(t.id==='sc-open'){ startCamera(); return }
+  if(t.id==='sc-open'||t.id==='sc-again'){ startCamera(); return }
   if(t.id==='sc-close'){ closeScanner(); return }
-  if(t.id==='sc-again'){ startCamera(); return }
-  if(t.dataset&&t.dataset.scfill){ const o=$('#sc-out'); const p=o&&o._parsed; if(!p) return;
-    if(t.dataset.scfill==='parsed'){ const f=p.fields; fillField('in-brand',f.brand); fillField('in-model',f.model); fillField('in-serial',f.serial); fillField('in-mfg',f.mfg) }
-    else fillField('in-'+t.dataset.scfill,p.raw);
-    if(typeof updateIntakeAlerts==='function') try{updateIntakeAlerts()}catch(x){}
-    closeScanner(); toast('Filled from the code. Check it against the label.') }
+  if(t.id==='sc-apply'){ applyCodes(); return }
 });
-document.addEventListener('change',e=>{ if(e.target.id==='sc-file'&&e.target.files[0]){ const f=e.target.files[0]; e.target.value=''; scanPhoto(f) } });
+document.addEventListener('change',e=>{
+  if(e.target.id==='sc-file'&&e.target.files[0]){ const f=e.target.files[0]; e.target.value=''; scanPhoto(f) }
+  if(e.target.dataset&&e.target.dataset.scrole!==undefined){ const c=SC.codes[+e.target.dataset.scrole]; if(c) c.role=e.target.value }
+});
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#scanRoot')) closeScanner() });
+
+/* ---------- brand picker (intake + record editor) ---------- */
+const BRANDS_USA=['Amerex','Ansul','Badger','Buckeye','First Alert','General','H3R Aviation','Kidde','Potter Roemer','Pyro-Chem','Range Guard','Strike First'];
+const BRANDS_INTL=['Bavaria','Gloria','Minimax'];
+function brandPicker(id){
+  const inp=$('#'+id); if(!inp||inp.dataset.bp) return; inp.dataset.bp='1';
+  const known=BRANDS_USA.concat(BRANDS_INTL); const lc=s=>s.toLowerCase();
+  const hist=[...new Set(S.units.map(u=>(u.brand||'').trim()).filter(b=>b&&!known.some(k=>lc(k)===lc(b))))].sort((a,b)=>a.localeCompare(b));
+  const opt=b=>'<option value="'+esc(b)+'">'+esc(b)+'</option>';
+  const sel=document.createElement('select'); sel.id=id+'-sel'; sel.setAttribute('aria-label','Brand'); sel.disabled=inp.disabled;
+  sel.innerHTML='<option value="">Select brand…</option><optgroup label="USA manufacturers">'+BRANDS_USA.map(opt).join('')+'</optgroup><optgroup label="Other manufacturers">'+BRANDS_INTL.concat(hist).map(opt).join('')+'</optgroup><option value="__other">Other (type the brand)…</option>';
+  inp.parentNode.insertBefore(sel,inp); inp.removeAttribute('list'); inp.placeholder='Type the brand';
+  const show=v=>{ inp.style.display=v?'':'none'; if(v) inp.style.marginTop='6px' };
+  const sync=()=>{ if(inp._skip) return; const v=inp.value.trim(); const m=[...sel.options].find(x=>x.value&&x.value!=='__other'&&lc(x.value)===lc(v));
+    if(!v){ if(sel.value!=='__other'){ sel.value=''; show(false) } } else if(m){ sel.value=m.value; show(false) } else { sel.value='__other'; show(true) }
+    sel.classList.toggle('filled',inp.classList.contains('filled')) };
+  sel.addEventListener('change',()=>{ inp._skip=true;
+    if(sel.value==='__other'){ if(known.concat(hist).some(k=>lc(k)===lc(inp.value.trim()))) inp.value=''; show(true); inp.focus() } else { inp.value=sel.value; show(false) }
+    inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true})); inp._skip=false });
+  inp.addEventListener('input',sync); inp.addEventListener('change',sync); inp.addEventListener('bpsync',sync); sync();
+}
+const _renderIntakeBP=renderIntake;
+renderIntake=function(){ _renderIntakeBP(); brandPicker('in-brand') };
+const _drawDrawerBP=drawDrawer;
+drawDrawer=function(){ _drawDrawerBP(); brandPicker('ed-brand') };
+document.addEventListener('click',e=>{ if(e.target.id==='in-fill') setTimeout(()=>{ const b=$('#in-brand'); b&&b.dispatchEvent(new Event('bpsync')) },0) });
 
 boot();
 
