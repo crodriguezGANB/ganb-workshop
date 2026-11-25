@@ -1257,8 +1257,8 @@ function libConfig(){
 }
 renderPhotoBox=function(){
   const b=$('#in-photo'); if(!b) return; b.hidden=false;
-  b.innerHTML=`<div class="photo"><div><b>Scan barcodes or QR code</b><div class="small muted">Reads the serial and model barcodes (or the QR code) from the label and fills the fields. With the camera, show one code at a time; a photo can hold the whole label.</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn pri" id="sc-open">Scan with camera</button><label class="btn" for="sc-file">From photo</label><input type="file" id="sc-file" accept="image/*" hidden></div></div>`;
+  b.innerHTML=`<div class="photo"><div><b>Read barcodes or QR code</b><div class="small muted">Take a photo of the label: the serial and model barcodes (or the QR code) are read and filled in. Fill the photo with the label, straight on and sharp.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn pri" for="sc-cap">Take photo of label</label><input type="file" id="sc-cap" accept="image/*" capture="environment" hidden><label class="btn" for="sc-file">Choose photo</label><input type="file" id="sc-file" accept="image/*" hidden></div></div>`;
 };
 function stopCam(){ if(scanner){ const s=scanner; scanner=null; try{ s.stop().then(()=>{try{s.clear()}catch(e){}}).catch(()=>{}) }catch(e){} } }
 function closeScanner(){ stopCam(); const r=$('#scanRoot'); if(r) r.remove() }
@@ -1304,7 +1304,7 @@ function drawCodes(){
   o.innerHTML='<div class="sclist">'+SC.codes.map((c,i)=>{ const pk=Object.keys(c.parsed||{});
     return '<div class="scrow"><div style="min-width:0;flex:1"><div class="mono" style="word-break:break-all">'+esc(c.text)+'</div><div class="small muted">'+esc(isQRfmt(c.fmt)?'QR code':(c.fmt||'Barcode').replace(/_/g,' '))+(pk.length?' · found '+pk.map(k=>({brand:'brand',model:'model',serial:'serial',mfg:'mfg date'})[k]).join(', '):'')+(/^https?:\/\//i.test(c.text)?' · <a href="'+esc(c.text)+'" target="_blank" rel="noopener">open link</a>':'')+'</div></div>'+
       '<select data-scrole="'+i+'" aria-label="Field for this code">'+(pk.length?'<option value="parsed"'+(c.role==='parsed'?' selected':'')+'>Fill found fields</option>':'')+opts.map(([k,l])=>'<option value="'+k+'"'+(c.role===k?' selected':'')+'>'+l+'</option>').join('')+'</select></div>' }).join('')+'</div>'+
-    '<div class="scanact" style="margin-top:10px"><button type="button" class="btn pri" id="sc-apply">Fill the fields</button>'+(scanner?'':'<button type="button" class="btn sm" id="sc-again">Scan with camera</button>')+'</div>';
+    '<div class="scanact" style="margin-top:10px"><button type="button" class="btn pri" id="sc-apply">Fill the fields</button>'+'<label class="btn sm" for="sc-cap2">Take another photo</label><input type="file" id="sc-cap2" accept="image/*" capture="environment" hidden>'+'</div>';
 }
 function fillField(id,val){ const el=$('#'+id); if(!el||!val) return; el.value=val; el.classList.add('filled'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})) }
 function applyCodes(){
@@ -1366,7 +1366,7 @@ document.addEventListener('click',e=>{ const t=e.target;
   if(t.id==='sc-apply'){ applyCodes(); return }
 });
 document.addEventListener('change',e=>{
-  if(e.target.id==='sc-file'&&e.target.files[0]){ const f=e.target.files[0]; e.target.value=''; scanPhoto(f) }
+  if(['sc-file','sc-cap','sc-cap2'].includes(e.target.id)&&e.target.files[0]){ const f=e.target.files[0]; e.target.value=''; scanPhoto(f) }
   if(e.target.dataset&&e.target.dataset.scrole!==undefined){ const c=SC.codes[+e.target.dataset.scrole]; if(c) c.role=e.target.value }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#scanRoot')) closeScanner() });
