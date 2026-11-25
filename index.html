@@ -1257,8 +1257,8 @@ function libConfig(){
 }
 renderPhotoBox=function(){
   const b=$('#in-photo'); if(!b) return; b.hidden=false;
-  b.innerHTML=`<div class="photo"><div><b>Read barcodes or QR code</b><div class="small muted">Take a photo of the label: the serial and model barcodes (or the QR code) are read and filled in. Fill the photo with the label, straight on and sharp.</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn pri" for="sc-cap">Take photo of label</label><input type="file" id="sc-cap" accept="image/*" capture="environment" hidden><label class="btn" for="sc-file">Choose photo</label><input type="file" id="sc-file" accept="image/*" hidden></div></div>`;
+  b.innerHTML=`<div class="photo"><div><b>Read barcodes or QR code</b><div class="small muted">Tap the button, then choose <b>Take Photo</b> (iPhone) or <b>Camera</b> (Android), or pick a photo you already took. The serial and model barcodes (or the QR code) are read and filled in. Fill the photo with the label, straight on and sharp.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn pri" for="sc-file">Take or choose photo</label><input type="file" id="sc-file" accept="image/*" hidden></div></div>`;
 };
 function stopCam(){ if(scanner){ const s=scanner; scanner=null; try{ s.stop().then(()=>{try{s.clear()}catch(e){}}).catch(()=>{}) }catch(e){} } }
 function closeScanner(){ stopCam(); const r=$('#scanRoot'); if(r) r.remove() }
@@ -1304,7 +1304,7 @@ function drawCodes(){
   o.innerHTML='<div class="sclist">'+SC.codes.map((c,i)=>{ const pk=Object.keys(c.parsed||{});
     return '<div class="scrow"><div style="min-width:0;flex:1"><div class="mono" style="word-break:break-all">'+esc(c.text)+'</div><div class="small muted">'+esc(isQRfmt(c.fmt)?'QR code':(c.fmt||'Barcode').replace(/_/g,' '))+(pk.length?' · found '+pk.map(k=>({brand:'brand',model:'model',serial:'serial',mfg:'mfg date'})[k]).join(', '):'')+(/^https?:\/\//i.test(c.text)?' · <a href="'+esc(c.text)+'" target="_blank" rel="noopener">open link</a>':'')+'</div></div>'+
       '<select data-scrole="'+i+'" aria-label="Field for this code">'+(pk.length?'<option value="parsed"'+(c.role==='parsed'?' selected':'')+'>Fill found fields</option>':'')+opts.map(([k,l])=>'<option value="'+k+'"'+(c.role===k?' selected':'')+'>'+l+'</option>').join('')+'</select></div>' }).join('')+'</div>'+
-    '<div class="scanact" style="margin-top:10px"><button type="button" class="btn pri" id="sc-apply">Fill the fields</button>'+'<label class="btn sm" for="sc-cap2">Take another photo</label><input type="file" id="sc-cap2" accept="image/*" capture="environment" hidden>'+'</div>';
+    '<div class="scanact" style="margin-top:10px"><button type="button" class="btn pri" id="sc-apply">Fill the fields</button>'+'<label class="btn sm" for="sc-cap2">Another photo</label><input type="file" id="sc-cap2" accept="image/*" hidden>'+'</div>';
 }
 function fillField(id,val){ const el=$('#'+id); if(!el||!val) return; el.value=val; el.classList.add('filled'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})) }
 function applyCodes(){
@@ -1338,7 +1338,7 @@ async function scanPhoto(file){
   scanShell('Read from photo'); const cam=$('#sc-cam'); if(cam) cam.style.display='none'; scMsg('Reading the photo…');
   let host=null;
   try{
-    const img=await loadImg(file); const W=img.naturalWidth, H=img.naturalHeight; const scale=Math.min(1,2600/Math.max(W,H));
+    const img=await loadImg(file); const W=img.naturalWidth, H=img.naturalHeight; let scale=Math.min(1,2600/Math.max(W,H));
     const found=(t,f)=>addCode(t,f);
     if('BarcodeDetector' in window){ try{ const det=new BarcodeDetector(); for(const rot of [false,true]){ const r=await det.detect(canvasPart(img,0,0,W,H,scale,rot)); r.forEach(x=>found(x.rawValue,(x.format||'').toUpperCase())); if(SC.codes.length) break } }catch(e){} }
     if(!SC.codes.length){
@@ -1353,9 +1353,11 @@ async function scanPhoto(file){
           await tryC(rot?canvasPart(img,a,0,len,H,scale,true):canvasPart(img,0,a,W,len,scale,false)) }
         if(SC.codes.length) break;
       }
+      if(!SC.codes.length&&scale<1){ scale=Math.min(1,4200/Math.max(W,H)); scMsg('Trying again at full resolution…');
+        const n=8; for(let i=0;i<n-1&&!SC.codes.length;i++){ const a=Math.round(H*i/n), len=Math.round(H*2/n); await tryC(canvasPart(img,0,a,W,len,scale,false)) } }
       try{ sc.clear() }catch(e){}
     }
-    scMsg(SC.codes.length?'Found '+SC.codes.length+' code'+(SC.codes.length>1?'s':'')+'. Check where each one goes, then tap <b>Fill the fields</b>.':'No barcode or QR code could be read. Take the photo closer and straight on, in good light, with the codes sharp. Or use <b>Scan with camera</b>.');
+    scMsg(SC.codes.length?'Found '+SC.codes.length+' code'+(SC.codes.length>1?'s':'')+'. Check where each one goes, then tap <b>Fill the fields</b>.':'No barcode or QR code could be read. Take the photo closer and straight on, in good light, with the codes sharp. Tip: take it from 15–25 cm with the label filling most of the photo.');
     drawCodes();
   }catch(e){ scMsg('The photo could not be read: '+esc((e&&e.message)||'error')) }
   finally{ if(host) host.remove() }
