@@ -1250,6 +1250,18 @@ async function getScanLib(){
   for(const u of SCAN_LIBS){ try{ await loadScript(u); if(window.Html5Qrcode){ scanLib=window.Html5Qrcode; return scanLib } }catch(e){} }
   throw new Error('The scanner could not load. Check the internet connection and try again.');
 }
+const WASM_LIBS=['https://cdn.jsdelivr.net/npm/zxing-wasm@2/dist/iife/reader/index.js','https://unpkg.com/zxing-wasm@2/dist/iife/reader/index.js'];
+let zx=null;
+async function getZX(){
+  if(zx) return zx;
+  for(const u of WASM_LIBS){ try{ if(!window.ZXingWASM) await loadScript(u); if(window.ZXingWASM){ zx=window.ZXingWASM; return zx } }catch(e){} }
+  return null;
+}
+async function zxRead(Z,input){
+  const opts={tryHarder:true,tryRotate:true,tryInvert:true,tryDownscale:true,maxNumberOfSymbols:8};
+  const fn=Z.readBarcodes||Z.readBarcodesFromImageData||Z.readBarcodesFromImageFile;
+  const r=await fn(input,opts); return (r||[]).filter(x=>x&&x.isValid!==false&&x.text);
+}
 function libConfig(){
   const F=window.Html5QrcodeSupportedFormats; const c={verbose:false,experimentalFeatures:{useBarCodeDetectorIfSupported:true}};
   if(F) c.formatsToSupport=['QR_CODE','CODE_128','CODE_39','CODE_93','EAN_13','EAN_8','UPC_A','UPC_E','ITF','CODABAR','DATA_MATRIX','PDF_417'].map(k=>F[k]).filter(v=>v!==undefined);
@@ -1307,8 +1319,11 @@ function drawCodes(){
     '<div class="scanact" style="margin-top:10px"><button type="button" class="btn pri" id="sc-apply">Fill the fields</button>'+'<label class="btn sm" for="sc-cap2">Another photo</label><input type="file" id="sc-cap2" accept="image/*" hidden>'+'</div>';
 }
 function fillField(id,val){ const el=$('#'+id); if(!el||!val) return; el.value=val; el.classList.add('filled'); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})) }
+const MODEL_BRAND=[[/^SF-/i,'Strike First']];
 function applyCodes(){
   let n=0;
+  const mc=SC.codes.find(c=>c.role==='model'); const bEl=$('#in-brand');
+  if(mc&&bEl&&!bEl.value){ const hit=MODEL_BRAND.find(([re])=>re.test(mc.text)); if(hit){ fillField('in-brand',hit[1]); n++ } }
   SC.codes.forEach(c=>{ if(c.role==='parsed'){ const f=c.parsed||{}; ['brand','model','serial','mfg'].forEach(k=>{ if(f[k]){ fillField('in-'+k,f[k]); n++ } }) }
     else if(['serial','model','brand'].includes(c.role)){ fillField('in-'+c.role,c.text); n++ } });
   if(typeof updateIntakeAlerts==='function') try{updateIntakeAlerts()}catch(x){}
@@ -1340,7 +1355,15 @@ async function scanPhoto(file){
   try{
     const img=await loadImg(file); const W=img.naturalWidth, H=img.naturalHeight; let scale=Math.min(1,2600/Math.max(W,H));
     const found=(t,f)=>addCode(t,f);
-    if('BarcodeDetector' in window){ try{ const det=new BarcodeDetector(); for(const rot of [false,true]){ const r=await det.detect(canvasPart(img,0,0,W,H,scale,rot)); r.forEach(x=>found(x.rawValue,(x.format||'').toUpperCase())); if(SC.codes.length) break } }catch(e){} }
+    let Z=null; try{ Z=await getZX() }catch(e){}
+    if(Z){
+      const grab=async inp=>{ try{ (await zxRead(Z,inp)).forEach(x=>found(x.text,String(x.format||'').toUpperCase().replace(/-/g,'_'))) }catch(e){ console.warn('zxing',e) } };
+      const id=c=>c.getContext('2d').getImageData(0,0,c.width,c.height);
+      await grab(file);
+      if(SC.codes.length<2){ scMsg('Reading the photo… (closer look)'); const s2=Math.min(1,3000/Math.max(W,H)); const n=6;
+        for(let i=0;i<n-1;i++){ const a=Math.round(H*i/n), len=Math.round(H*2/n); await grab(id(canvasPart(img,0,a,W,len,s2,false))) } }
+    }
+    if(!SC.codes.length&&'BarcodeDetector' in window){ try{ const det=new BarcodeDetector(); for(const rot of [false,true]){ const r=await det.detect(canvasPart(img,0,0,W,H,scale,rot)); r.forEach(x=>found(x.rawValue,(x.format||'').toUpperCase())); if(SC.codes.length) break } }catch(e){} }
     if(!SC.codes.length){
       const L=await getScanLib(); host=document.createElement('div'); host.id='sc-tmp'; host.style.cssText='position:fixed;left:-20000px;top:0;width:5000px;height:20px;overflow:hidden'; document.body.appendChild(host);
       const sc=new L('sc-tmp',libConfig());
@@ -1357,7 +1380,7 @@ async function scanPhoto(file){
         const n=8; for(let i=0;i<n-1&&!SC.codes.length;i++){ const a=Math.round(H*i/n), len=Math.round(H*2/n); await tryC(canvasPart(img,0,a,W,len,scale,false)) } }
       try{ sc.clear() }catch(e){}
     }
-    scMsg(SC.codes.length?'Found '+SC.codes.length+' code'+(SC.codes.length>1?'s':'')+'. Check where each one goes, then tap <b>Fill the fields</b>.':'No barcode or QR code could be read. Take the photo closer and straight on, in good light, with the codes sharp. Tip: take it from 15–25 cm with the label filling most of the photo.');
+    scMsg((SC.codes.length?'Found '+SC.codes.length+' code'+(SC.codes.length>1?'s':'')+'. Check where each one goes, then tap <b>Fill the fields</b>.':'No barcode or QR code could be read. Take the photo closer and straight on, in good light, with the codes sharp. Tip: take it from 15–25 cm with the label filling most of the photo.')+'<div class="small muted" style="margin-top:4px;opacity:.7">Reader: '+(Z?'advanced':'basic')+'</div>');
     drawCodes();
   }catch(e){ scMsg('The photo could not be read: '+esc((e&&e.message)||'error')) }
   finally{ if(host) host.remove() }
